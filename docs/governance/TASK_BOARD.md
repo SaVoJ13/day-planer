@@ -55,15 +55,15 @@
 
 ---
 
-## Етап 6: Підготовка до закритого тестування й ASO (Поточний етап)
+## Етап 6: Підготовка до закритого тестування й ASO (Завершено)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-014** | Підготовка метаданих Google Play (4 мови), скриншотів, Data Safety | ASO Agent | `In Progress` | `task/006-store-and-testing-prep` | Повний пакет для Play Console |
-| **TASK-015** | План закритого тестування (вимоги 14 днів / 20 тестувальників) | Lead | `In Progress` | `task/006-store-and-testing-prep` | Документований план дій для Власника |
+| **TASK-014** | Підготовка метаданих Google Play (4 мови), скриншотів, Data Safety | ASO Agent | **Done** | `main` | Повний пакет для Play Console ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE6_QA_VERIFICATION.md)) |
+| **TASK-015** | План закритого тестування (вимоги 14 днів / 20 тестувальників) | Lead | **Done** | `main` | Документований план дій для Власника ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE6_QA_VERIFICATION.md)) |
 
 ---
 
-## Етап 7: Релізне рішення
+## Етап 7: Релізне рішення (Завершено)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-016** | Підсумковий релізний пакет і перехід до публікації | Власник / Lead | `Backlog` | - | Рішення Власника |
+| **TASK-016** | Підсумковий релізний пакет і перехід до публікації | Власник / Lead | **Done** | `main` | Підсумковий релізний звіт ([FINAL_RELEASE_REPORT.md](file:///c:/Users/cocro/Downloads/day%20planer/docs/reports/FINAL_RELEASE_REPORT.md)) |
