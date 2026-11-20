@@ -8,7 +8,7 @@
 - **Поточний етап:** **Етап 0 — Аудит і governance**
 - **Поточний статус:** Завершено аудит середовища та репозиторію; розгорнуто governance-структуру; очікується рішення Власника (`Owner Approved`) для переходу до Етапу 1.
 - **Поточна гілка:** `task/001-governance-audit`
-- **Останній коміт:** Ініціалізація структури governance.
+- **Останній коміт:** `8780ca9` (chore(governance): initialize constitution, project profile, and memory system for Stage 0)
 
 ---
 

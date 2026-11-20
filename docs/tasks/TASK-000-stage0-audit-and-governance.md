@@ -43,7 +43,7 @@
   4. Створено директорії `docs/governance/`, `docs/tasks/`, `docs/reports/`, `docs/templates/`.
   5. Сформовано чернетку `PROJECT_PROFILE.md` на базі шаблону, виділено невідомі параметри (ліцензія, точна назва, параметри часу) та передано їх у `OWNER_INBOX.md`.
   6. Складено `DEFINITION_OF_DONE.md`, `TASK_BOARD.md`, `CURRENT_STATE.md`, `DECISIONS.md`, `LESSONS.md`, `SESSION_LOG.md` та `THIRD_PARTY.md`.
-- **Стан:** Гілка `task/001-governance-audit`, файли підготовлені, тести ще не застосовні (етап governance/документації).
+- **Стан:** Гілка `task/001-governance-audit`, коміт `8780ca9`, файли підготовлені, тести ще не застосовні (етап governance/документації).
 - **Зупинився на:** Підготовка підсумкового звіту для Власника та очікування `Owner Approved` для відкриття Етапу 1.
 - **Наступний крок:** Надіслати звіт аудиту Власнику та запитати рішення щодо ліцензії і схвалення Етапу 0.
 - **Увага / пастки:** При майбутній збірці Android-проєкту вказувати шлях до Java з Android Studio (`C:\Program Files\Android\Android Studio\jbr`), оскільки системний `PATH` не містить глобальної команди `java`.
