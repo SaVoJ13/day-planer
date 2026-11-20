@@ -74,3 +74,10 @@
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
 | **TASK-017** | Реалізація спільних групових списків покупок (Firebase Firestore, Anonymous Auth, 6-значний код, QR/Share, реалтайм-синхронізація) | Android Dev / QA | **Done** | `main` | Інтеграція Firebase, Room міграція v2, UI приєднання та спільного доступу ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE8_QA_VERIFICATION.md)) |
+
+---
+
+## Виправлення та UX-покращення (Завершено)
+| ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
+|---|---|---|---|---|---|
+| **TASK-018** | Виправлення перекриття поля вводу системною навігаційною панеллю Android 15 (`enableEdgeToEdge`, `navigationBarsPadding`, `imePadding`) | Android Dev / QA | **Done** | `main` | Панель вводу повністю піднята над панеллю навігації, 11/11 тестів ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/TASK-018_QA_VERIFICATION.md)) |
