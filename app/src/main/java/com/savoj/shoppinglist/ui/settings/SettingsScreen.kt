@@ -116,8 +116,13 @@ fun SettingsScreen(
             ) {
                 Column(modifier = Modifier.padding(8.dp)) {
                     SettingRadioItem(
+                        title = stringResource(R.string.lang_system),
+                        selected = currentLang == SettingsRepositoryImpl.LANG_SYSTEM,
+                        onClick = { viewModel.setLanguage(SettingsRepositoryImpl.LANG_SYSTEM) }
+                    )
+                    SettingRadioItem(
                         title = stringResource(R.string.lang_uk),
-                        selected = currentLang == SettingsRepositoryImpl.LANG_UK || (currentLang == SettingsRepositoryImpl.LANG_SYSTEM),
+                        selected = currentLang == SettingsRepositoryImpl.LANG_UK,
                         onClick = { viewModel.setLanguage(SettingsRepositoryImpl.LANG_UK) }
                     )
                     SettingRadioItem(

@@ -72,6 +72,7 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="settings_language">App Language</string>
+    <string name="lang_system">System default</string>
     <string name="lang_uk">🇺🇦 Ukrainian</string>
     <string name="lang_en">🇬🇧 English</string>
     <string name="lang_pl">🇵🇱 Polish</string>
