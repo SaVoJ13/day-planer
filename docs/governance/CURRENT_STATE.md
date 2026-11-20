@@ -4,11 +4,11 @@
 
 ---
 
-- **Дата й час оновлення:** 2026-11-20 10:40 (CET)
-- **Поточний етап:** **Етап 3 — Архітектура й дозволи** (Етапи 0, 1, 2 завершено та QA-верифіковано)
-- **Поточний статус:** Етап 2 (UX і локалізація 4 мовами) верифіковано незалежним QA-агентом (`STAGE2_QA_VERIFICATION.md`), злито в `main` і відправлено на GitHub. Розпочато Етап 3.
-- **Поточна гілка:** `task/004-architecture-and-permissions`
-- **Останній коміт:** `416fdb1` (feat(ux-l10n): complete UX specifications, 4-language localization table and Stage 2 QA verification)
+- **Дата й час оновлення:** 2026-11-20 10:45 (CET)
+- **Поточний етап:** **Етап 4 — Реалізація MVP** (Етапи 0, 1, 2, 3 успішно завершено та QA-верифіковано)
+- **Поточний статус:** Етап 3 (Архітектура, Room схема, Zero Network аудит, Privacy Policy) верифіковано незалежним QA-агентом (`STAGE3_QA_VERIFICATION.md`), злито в `main` і синхронізовано з GitHub. Розпочато практичну реалізацію Android MVP.
+- **Поточна гілка:** `task/005-mvp-implementation`
+- **Останній коміт:** `caf10d8` (feat(arch-privacy): complete technical architecture, Room schema, privacy policy and Stage 3 QA verification)
 
 ---
 

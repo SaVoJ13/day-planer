@@ -28,23 +28,23 @@
 
 ---
 
-## Етап 3: Архітектура й дозволи (Поточний етап)
+## Етап 3: Архітектура й дозволи (Завершено)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-005** | Технічне проєктування (Room entities, DAO, MVVM architecture, zero-network audit) | Android Architect | `In Progress` | `task/004-architecture-and-permissions` | ADR, схема БД, план тестів, QA-перевірка |
-| **TASK-006** | Дослідження монетизації, Data Safety та Privacy Policy | Monetization Agent | `In Progress` | `task/004-architecture-and-permissions` | Специфікація безпеки, чернетка Privacy Policy, QA-перевірка |
+| **TASK-005** | Технічне проєктування (Room entities, DAO, MVVM architecture, zero-network audit) | Android Architect | **Done** | `main` | ADR, схема БД, план тестів ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE3_QA_VERIFICATION.md)) |
+| **TASK-006** | Дослідження монетизації, Data Safety та Privacy Policy | Monetization Agent | **Done** | `main` | Специфікація безпеки, чернетка Privacy Policy ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE3_QA_VERIFICATION.md)) |
 
 ---
 
-## Етап 4: Реалізація MVP
+## Етап 4: Реалізація MVP (Поточний етап)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-007** | Ініціалізація Android-проєкту (Gradle, Compose, Room, навігація) | Android Dev | `Backlog` | - | Чистий білд `./gradlew assembleDebug` |
-| **TASK-008** | Сценарій 1: Створення, перейменування, видалення списків | Android Dev | `Backlog` | - | Автотести, UI |
-| **TASK-009** | Сценарій 2: Додавання, редагування, видалення товарів (кількість, категорії) | Android Dev | `Backlog` | - | Автотести, UI |
-| **TASK-010** | Сценарій 3: Позначення купленого, секція завершеного, повернення | Android Dev | `Backlog` | - | Автотести, UI |
-| **TASK-011** | Сценарій 4: Повторне використання списків, шаблони, часті товари | Android Dev | `Backlog` | - | Автотести, UI |
-| **TASK-012** | Сценарій 5: Мультимовність (налаштування мови, автовизначення) | Android Dev | `Backlog` | - | Перемикання в UI, збереження |
+| **TASK-007** | Ініціалізація Android-проєкту (Gradle, Compose, Room, навігація, ресурси 4 мов) | Android Dev | `In Progress` | `task/005-mvp-implementation` | Структура Gradle, Room, локалізація, компіляція |
+| **TASK-008** | Сценарій 1: Створення, перейменування, видалення списків | Android Dev | `In Progress` | `task/005-mvp-implementation` | Списки, прогрес, скидання відміток |
+| **TASK-009** | Сценарій 2: Додавання, редагування, видалення товарів (кількість, категорії) | Android Dev | `In Progress` | `task/005-mvp-implementation` | Категорії, сортування, операції над товарами |
+| **TASK-010** | Сценарій 3: Позначення купленого, секція завершеного, повернення (Undo) | Android Dev | `In Progress` | `task/005-mvp-implementation` | Акордеон завершеного, чекбокси, Undo |
+| **TASK-011** | Сценарій 4: Повторне використання списків, шаблони, часті товари, Multi-line paste | Android Dev | `In Progress` | `task/005-mvp-implementation` | Пакетне вставлення тексту, RecentItems |
+| **TASK-012** | Сценарій 5: Мультимовність (налаштування мови, автовизначення, теми) | Android Dev | `In Progress` | `task/005-mvp-implementation` | Перемикання UK/EN/PL/RU, темна/світла теми |
 
 ---
 
