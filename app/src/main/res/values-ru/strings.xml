@@ -99,6 +99,13 @@
     <string name="error_cloud_sync">Не удалось связаться с облаком. Проверьте интернет</string>
     <string name="share_invite_template">Присоединяйся к моему списку покупок «%1$s»! Введи код в приложении: %2$s</string>
 
+    <!-- Голосовой ввод и оптимизация ввода -->
+    <string name="voice_input_prompt">Назовите список покупок (например: хлеб, молоко, яблоки)</string>
+    <string name="voice_input_unavailable">Голосовой ввод недоступен на этом устройстве</string>
+    <string name="voice_input_tooltip">Голосовой ввод</string>
+    <string name="smart_added_toast">Добавлено %1$d товаров</string>
+    <string name="quick_suggestions_title">Быстрые подсказки</string>
+
     <!-- Множественные формы (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d товар</item>

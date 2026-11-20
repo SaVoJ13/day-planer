@@ -221,14 +221,18 @@ class ShoppingRepositoryImpl(
         }
 
         fun parseMultiLineText(text: String): List<String> {
-            val lines = if (text.contains("\n")) {
-                text.split("\n")
-            } else {
-                text.split(",")
-            }
+            if (text.isBlank()) return emptyList()
+
+            val normalized = text
+                .replace(Regex("(?i)\\s+(і|та|й|and|or)\\s+"), ", ")
+                .replace(";", ",")
+
+            val lines = normalized.split(Regex("[\n\r,]+"))
+
             return lines
                 .map { cleanItemName(it) }
                 .filter { it.isNotBlank() }
+                .distinct()
         }
     }
 }

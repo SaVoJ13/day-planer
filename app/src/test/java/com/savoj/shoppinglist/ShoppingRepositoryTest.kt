@@ -66,6 +66,29 @@ class ShoppingRepositoryTest {
     }
 
     @Test
+    fun testParseMultiLineText_conjunctions() {
+        val raw = "Хліб і молоко та сир й масло and яйця"
+        val result = ShoppingRepositoryImpl.parseMultiLineText(raw)
+        assertEquals(5, result.size)
+        assertEquals("Хліб", result[0])
+        assertEquals("молоко", result[1])
+        assertEquals("сир", result[2])
+        assertEquals("масло", result[3])
+        assertEquals("яйця", result[4])
+    }
+
+    @Test
+    fun testParseMultiLineText_semicolonsAndMixed() {
+        val raw = "Кава; Чай, Цукор\nПечиво"
+        val result = ShoppingRepositoryImpl.parseMultiLineText(raw)
+        assertEquals(4, result.size)
+        assertEquals("Кава", result[0])
+        assertEquals("Чай", result[1])
+        assertEquals("Цукор", result[2])
+        assertEquals("Печиво", result[3])
+    }
+
+    @Test
     fun testParseMultiLineText_empty() {
         val raw = "   \n   \n   "
         val result = ShoppingRepositoryImpl.parseMultiLineText(raw)

@@ -144,6 +144,46 @@ class ListDetailsViewModel(
         }
     }
 
+    fun addSmartItems(rawText: String) {
+        val parsed = ShoppingRepositoryImpl.parseMultiLineText(rawText)
+        if (parsed.isEmpty()) return
+
+        if (parsed.size == 1) {
+            addItem(parsed.first())
+        } else {
+            viewModelScope.launch {
+                repository.addMultipleItems(listId, parsed)
+                val list = _uiState.value.currentList
+                if (list?.isShared == true && list.shareCode != null && groupRepository != null) {
+                    parsed.forEach { name ->
+                        groupRepository.addSharedItem(
+                            shareCode = list.shareCode,
+                            name = name,
+                            quantity = "",
+                            unit = "",
+                            categoryName = ""
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    fun onVoiceInput(spokenText: String) {
+        val cleanSpeech = spokenText
+            .replace(Regex("(?i)^(купити|купи|додати|додай|купить|добав|добавить|buy|add|kup)\\s+"), "")
+            .trim()
+        val parsed = ShoppingRepositoryImpl.parseMultiLineText(cleanSpeech)
+        if (parsed.size > 1) {
+            _uiState.value = _uiState.value.copy(
+                showPasteDialog = true,
+                parsedPasteItems = parsed
+            )
+        } else if (parsed.size == 1) {
+            addItem(parsed.first())
+        }
+    }
+
     fun toggleItemCompleted(item: ShoppingItem) {
         viewModelScope.launch {
             val updated = item.copy(isCompleted = !item.isCompleted)

@@ -99,6 +99,13 @@
     <string name="error_cloud_sync">Could not connect to cloud. Check internet</string>
     <string name="share_invite_template">Join my shopping list \"%1$s\"! Enter code in app: %2$s</string>
 
+    <!-- Voice input & fast input optimization -->
+    <string name="voice_input_prompt">Say items to buy (e.g., bread, milk, apples)</string>
+    <string name="voice_input_unavailable">Voice input is unavailable on this device</string>
+    <string name="voice_input_tooltip">Voice input</string>
+    <string name="smart_added_toast">Added %1$d items</string>
+    <string name="quick_suggestions_title">Quick suggestions</string>
+
     <!-- Plurals -->
     <plurals name="plural_items">
         <item quantity="one">%d item</item>

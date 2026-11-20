@@ -1,9 +1,14 @@
 package com.savoj.shoppinglist.ui.details
 
+import android.app.Activity
 import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.speech.RecognizerIntent
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,14 +28,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
@@ -55,6 +64,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -76,12 +86,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.savoj.shoppinglist.R
+import com.savoj.shoppinglist.data.repository.ShoppingRepositoryImpl
 import com.savoj.shoppinglist.domain.model.ShoppingItem
+import java.util.Locale
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,6 +117,51 @@ fun ListDetailsScreen(
 
     val undoLabel = stringResource(R.string.btn_undo)
     val itemDeletedMessage = stringResource(R.string.toast_item_deleted)
+
+    val voiceLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val spokenText = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull() ?: ""
+            if (spokenText.isNotBlank()) {
+                viewModel.onVoiceInput(spokenText)
+            }
+        }
+    }
+
+    val launchVoiceInput = {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            putExtra(RecognizerIntent.EXTRA_PROMPT, context.getString(R.string.voice_input_prompt))
+            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag())
+        }
+        try {
+            voiceLauncher.launch(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, context.getString(R.string.voice_input_unavailable), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val currentLocaleLang = Locale.getDefault().language
+    val stapleItems = remember(currentLocaleLang) {
+        when (currentLocaleLang) {
+            "en" -> listOf("Bread", "Milk", "Eggs", "Cheese", "Butter", "Apples", "Bananas", "Water", "Coffee", "Tea")
+            "pl" -> listOf("Chleb", "Mleko", "Jajka", "Ser", "Masło", "Jabłka", "Banany", "Woda", "Kawa", "Herbata")
+            "ru" -> listOf("Хлеб", "Молоко", "Яйца", "Сыр", "Масло", "Яблоки", "Бананы", "Вода", "Кофе", "Чай")
+            else -> listOf("Хліб", "Молоко", "Яйця", "Сир", "Масло", "Яблука", "Банани", "Вода", "Кава", "Чай")
+        }
+    }
+
+    val activeNames = remember(uiState.items) {
+        uiState.items.filter { !it.isCompleted }.map { it.name.lowercase(Locale.ROOT) }.toSet()
+    }
+    val suggestions = remember(uiState.recentItems, stapleItems, activeNames) {
+        val recentNames = uiState.recentItems.map { it.name }
+        (recentNames + stapleItems)
+            .distinctBy { it.lowercase(Locale.ROOT) }
+            .filter { it.lowercase(Locale.ROOT) !in activeNames }
+            .take(10)
+    }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -190,55 +249,124 @@ fun ListDetailsScreen(
                 tonalElevation = 3.dp,
                 shadowElevation = 8.dp
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .navigationBarsPadding()
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(
-                        onClick = {
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clipText = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
-                            if (clipText.isNotBlank()) {
-                                viewModel.onClipboardPasted(clipText)
+                    // Quick Suggestion Chips Row
+                    if (suggestions.isNotEmpty()) {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            items(suggestions, key = { it }) { suggestion ->
+                                SuggestionChip(
+                                    onClick = { viewModel.addItem(suggestion) },
+                                    label = { Text("+ $suggestion", style = MaterialTheme.typography.labelMedium) },
+                                    colors = SuggestionChipDefaults.suggestionChipColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                                        labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                    ),
+                                    border = null
+                                )
                             }
                         }
-                    ) {
-                        Icon(Icons.Default.ContentPaste, contentDescription = stringResource(R.string.paste_action_tooltip))
                     }
 
-                    IconButton(
-                        onClick = { viewModel.setRecentSheetVisible(true) }
-                    ) {
-                        Icon(Icons.Default.Star, contentDescription = stringResource(R.string.recent_sheet_title))
-                    }
-
-                    OutlinedTextField(
-                        value = inputItemName,
-                        onValueChange = { inputItemName = it },
-                        placeholder = { Text(stringResource(R.string.item_quick_add_hint)) },
-                        singleLine = true,
+                    // Input Row
+                    Row(
                         modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 4.dp)
-                    )
-
-                    IconButton(
-                        onClick = {
-                            if (inputItemName.isNotBlank()) {
-                                viewModel.addItem(inputItemName)
-                                inputItemName = ""
-                            }
-                        },
-                        enabled = inputItemName.isNotBlank()
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = stringResource(R.string.action_add),
-                            tint = if (inputItemName.isNotBlank()) MaterialTheme.colorScheme.primary else Color.Gray
+                        IconButton(
+                            onClick = {
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clipText = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+                                if (clipText.isNotBlank()) {
+                                    viewModel.onClipboardPasted(clipText)
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Default.ContentPaste, contentDescription = stringResource(R.string.paste_action_tooltip))
+                        }
+
+                        IconButton(
+                            onClick = { viewModel.setRecentSheetVisible(true) }
+                        ) {
+                            Icon(Icons.Default.Star, contentDescription = stringResource(R.string.recent_sheet_title))
+                        }
+
+                        OutlinedTextField(
+                            value = inputItemName,
+                            onValueChange = { inputItemName = it },
+                            placeholder = { Text(stringResource(R.string.item_quick_add_hint)) },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(
+                                imeAction = ImeAction.Done,
+                                capitalization = KeyboardCapitalization.Sentences
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    if (inputItemName.isNotBlank()) {
+                                        val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
+                                        viewModel.addSmartItems(inputItemName)
+                                        inputItemName = ""
+                                        if (count > 1) {
+                                            Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+                            ),
+                            trailingIcon = {
+                                if (inputItemName.isNotBlank()) {
+                                    IconButton(onClick = { inputItemName = "" }) {
+                                        Icon(
+                                            Icons.Default.Close,
+                                            contentDescription = stringResource(R.string.action_cancel),
+                                            modifier = Modifier.size(18.dp)
+                                        )
+                                    }
+                                }
+                            },
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 4.dp)
                         )
+
+                        if (inputItemName.isNotBlank()) {
+                            IconButton(
+                                onClick = {
+                                    val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
+                                    viewModel.addSmartItems(inputItemName)
+                                    inputItemName = ""
+                                    if (count > 1) {
+                                        Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.Add,
+                                    contentDescription = stringResource(R.string.action_add),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        } else {
+                            IconButton(
+                                onClick = { launchVoiceInput() }
+                            ) {
+                                Icon(
+                                    Icons.Default.Mic,
+                                    contentDescription = stringResource(R.string.voice_input_tooltip),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
                     }
                 }
             }

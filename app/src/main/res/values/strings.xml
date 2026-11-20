@@ -99,6 +99,13 @@
     <string name="error_cloud_sync">Не вдалося зв\'язатися з хмарою. Перевірте інтернет</string>
     <string name="share_invite_template">Приєднуйся до мого списку покупок «%1$s»! Введи код у додатку: %2$s</string>
 
+    <!-- Голосовий ввід та оптимізація введення -->
+    <string name="voice_input_prompt">Скажіть список товарів (наприклад: хліб, молоко, яблука)</string>
+    <string name="voice_input_unavailable">Голосовий ввід недоступний на цьому пристрої</string>
+    <string name="voice_input_tooltip">Голосовий ввід</string>
+    <string name="smart_added_toast">Додано %1$d товарів</string>
+    <string name="quick_suggestions_title">Швидкі підказки</string>
+
     <!-- Множини (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d товар</item>

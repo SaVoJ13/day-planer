@@ -99,6 +99,13 @@
     <string name="error_cloud_sync">Nie udało się połączyć z chmurą. Sprawdź internet</string>
     <string name="share_invite_template">Dołącz do mojej listy zakupów \"%1$s\"! Wpisz kod w aplikacji: %2$s</string>
 
+    <!-- Wprowadzanie głosowe i optymalizacja wprowadzania -->
+    <string name="voice_input_prompt">Powiedz listę produktów (np. chleb, mleko, jabłka)</string>
+    <string name="voice_input_unavailable">Wprowadzanie głosowe jest niedostępne na tym urządzeniu</string>
+    <string name="voice_input_tooltip">Wprowadzanie głosowe</string>
+    <string name="smart_added_toast">Dodano %1$d produktów</string>
+    <string name="quick_suggestions_title">Szybkie podpowiedzi</string>
+
     <!-- Liczba mnoga (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d pozycja</item>
