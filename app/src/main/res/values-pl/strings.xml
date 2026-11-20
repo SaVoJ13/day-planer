@@ -80,6 +80,22 @@
     <string name="settings_version">Wersja %1$s</string>
     <string name="settings_privacy_note">Pełna prywatność: dane są zapisywane tylko na Twoim urządzeniu</string>
 
+    <!-- Wspólne listy zakupów -->
+    <string name="share_list_title">Wspólna lista</string>
+    <string name="share_code_title">Kod dla znajomych</string>
+    <string name="share_code_desc">Wyślij ten 6-znakowy kod znajomym, aby mogli dołączyć do listy i dodawać produkty:</string>
+    <string name="action_copy_code">Kopiuj kod</string>
+    <string name="action_send_invite">Udostępnij zaproszenie</string>
+    <string name="action_join_list">Dołącz do listy</string>
+    <string name="join_list_hint">Wpisz 6-znakowy kod</string>
+    <string name="join_btn">Dołącz</string>
+    <string name="badge_shared">Wspólna</string>
+    <string name="toast_code_copied">Skopiowano kod do schowka</string>
+    <string name="toast_list_joined">Dołączono do listy!</string>
+    <string name="error_invalid_code">Kod musi mieć 6 znaków</string>
+    <string name="error_cloud_sync">Nie udało się połączyć z chmurą. Sprawdź internet</string>
+    <string name="share_invite_template">Dołącz do mojej listy zakupów \"%1$s\"! Wpisz kod w aplikacji: %2$s</string>
+
     <!-- Liczba mnoga (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d pozycja</item>

@@ -31,7 +31,9 @@ class ShoppingRepositoryImpl(
                     createdAt = stat.list.createdAt,
                     totalItems = stat.totalItems,
                     completedItems = stat.completedItems,
-                    isArchived = stat.list.isArchived
+                    isArchived = stat.list.isArchived,
+                    isShared = stat.list.isShared,
+                    shareCode = stat.list.shareCode
                 )
             }
         }
@@ -45,7 +47,9 @@ class ShoppingRepositoryImpl(
                     name = it.name,
                     colorHex = it.colorHex,
                     createdAt = it.createdAt,
-                    isArchived = it.isArchived
+                    isArchived = it.isArchived,
+                    isShared = it.isShared,
+                    shareCode = it.shareCode
                 )
             }
         }

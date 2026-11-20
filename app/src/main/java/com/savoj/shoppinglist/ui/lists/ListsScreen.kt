@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -24,6 +26,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,6 +76,9 @@ fun ListsScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.lists_screen_title), fontWeight = FontWeight.Bold) },
                 actions = {
+                    IconButton(onClick = { viewModel.showJoinDialog() }) {
+                        Icon(Icons.Default.GroupAdd, contentDescription = stringResource(R.string.action_join_list))
+                    }
                     IconButton(onClick = onNavigateToSettings) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.action_settings))
                     }
@@ -218,6 +224,66 @@ fun ListsScreen(
             }
         )
     }
+
+    // Join Shared List Dialog
+    if (uiState.showJoinDialog) {
+        var codeInput by remember { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { viewModel.hideJoinDialog() },
+            title = { Text(stringResource(R.string.action_join_list), fontWeight = FontWeight.Bold) },
+            text = {
+                Column {
+                    Text(
+                        text = stringResource(R.string.share_code_desc),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = codeInput,
+                        onValueChange = {
+                            if (it.length <= 6) codeInput = it.uppercase()
+                        },
+                        label = { Text(stringResource(R.string.join_list_hint)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (uiState.errorMessage != null) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = uiState.errorMessage ?: "",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.joinSharedList(codeInput) { joinedId ->
+                            onNavigateToListDetails(joinedId)
+                        }
+                    },
+                    enabled = codeInput.trim().length == 6 && !uiState.isJoining
+                ) {
+                    if (uiState.isJoining) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
+                    } else {
+                        Text(stringResource(R.string.join_btn))
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.hideJoinDialog() }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -248,14 +314,40 @@ fun ShoppingListCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = list.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = list.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    if (list.isShared && list.shareCode != null) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.Default.Group,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(12.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = "${stringResource(R.string.badge_shared)}: ${list.shareCode}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
+                        }
+                    }
+                }
 
                 Box {
                     IconButton(onClick = { menuExpanded = true }) {

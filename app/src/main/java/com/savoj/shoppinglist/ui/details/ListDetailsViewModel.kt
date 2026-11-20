@@ -2,6 +2,8 @@ package com.savoj.shoppinglist.ui.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.savoj.shoppinglist.data.local.entity.ShoppingItemEntity
+import com.savoj.shoppinglist.data.remote.GroupShoppingRepository
 import com.savoj.shoppinglist.data.repository.ShoppingRepositoryImpl
 import com.savoj.shoppinglist.domain.model.Category
 import com.savoj.shoppinglist.domain.model.RecentItem
@@ -24,12 +26,16 @@ data class ListDetailsUiState(
     val parsedPasteItems: List<String> = emptyList(),
     val showRecentSheet: Boolean = false,
     val lastDeletedItem: ShoppingItem? = null,
-    val showCompletedSection: Boolean = true
+    val showCompletedSection: Boolean = true,
+    val showShareDialog: Boolean = false,
+    val isSharingLoading: Boolean = false,
+    val shareError: String? = null
 )
 
 class ListDetailsViewModel(
     private val listId: Long,
-    private val repository: ShoppingRepository
+    private val repository: ShoppingRepository,
+    private val groupRepository: GroupShoppingRepository? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ListDetailsUiState())
@@ -43,6 +49,10 @@ class ListDetailsViewModel(
         viewModelScope.launch {
             repository.getListById(listId).collect { list ->
                 _uiState.value = _uiState.value.copy(currentList = list)
+                // If list is shared, observe remote updates
+                if (list?.isShared == true && list.shareCode != null && groupRepository != null) {
+                    observeRemoteList(list.shareCode)
+                }
             }
         }
         viewModelScope.launch {
@@ -62,17 +72,86 @@ class ListDetailsViewModel(
         }
     }
 
+    private fun observeRemoteList(shareCode: String) {
+        if (groupRepository == null) return
+        viewModelScope.launch {
+            groupRepository.observeSharedItems(shareCode).collect { remoteItems ->
+                // Remote items updated in real time - can be refreshed
+            }
+        }
+    }
+
+    fun showShareDialog() {
+        val list = _uiState.value.currentList ?: return
+        if (list.isShared && list.shareCode != null) {
+            _uiState.value = _uiState.value.copy(showShareDialog = true)
+        } else {
+            createAndShareList()
+        }
+    }
+
+    fun hideShareDialog() {
+        _uiState.value = _uiState.value.copy(showShareDialog = false, shareError = null)
+    }
+
+    fun createAndShareList() {
+        if (groupRepository == null) return
+        val list = _uiState.value.currentList ?: return
+        val currentItems = _uiState.value.items
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isSharingLoading = true, shareError = null)
+            val entityItems = currentItems.map { item ->
+                ShoppingItemEntity(
+                    id = item.id,
+                    listId = listId,
+                    name = item.name,
+                    quantity = item.quantity,
+                    unit = item.unit,
+                    categoryId = item.categoryId,
+                    isCompleted = item.isCompleted
+                )
+            }
+            val result = groupRepository.createSharedList(listId, list.name, entityItems)
+            _uiState.value = _uiState.value.copy(isSharingLoading = false)
+            result.onSuccess { code ->
+                _uiState.value = _uiState.value.copy(
+                    showShareDialog = true,
+                    currentList = _uiState.value.currentList?.copy(isShared = true, shareCode = code)
+                )
+            }.onFailure { err ->
+                _uiState.value = _uiState.value.copy(
+                    shareError = err.message ?: "Помилка створення спільного списку"
+                )
+            }
+        }
+    }
+
     fun addItem(name: String, quantity: Double? = null, unit: String? = null, categoryId: Long? = null) {
         val cleanName = ShoppingRepositoryImpl.cleanItemName(name)
         if (cleanName.isBlank()) return
         viewModelScope.launch {
             repository.addItem(listId, cleanName, quantity, unit, categoryId)
+            val list = _uiState.value.currentList
+            if (list?.isShared == true && list.shareCode != null && groupRepository != null) {
+                groupRepository.addSharedItem(
+                    shareCode = list.shareCode,
+                    name = cleanName,
+                    quantity = quantity?.toString() ?: "",
+                    unit = unit ?: "",
+                    categoryName = ""
+                )
+            }
         }
     }
 
     fun toggleItemCompleted(item: ShoppingItem) {
         viewModelScope.launch {
-            repository.updateItem(item.copy(isCompleted = !item.isCompleted))
+            val updated = item.copy(isCompleted = !item.isCompleted)
+            repository.updateItem(updated)
+            val list = _uiState.value.currentList
+            if (list?.isShared == true && list.shareCode != null && groupRepository != null) {
+                groupRepository.toggleSharedItem(list.shareCode, item.id.toString(), updated.isCompleted)
+            }
         }
     }
 
@@ -80,6 +159,10 @@ class ListDetailsViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(lastDeletedItem = item)
             repository.deleteItem(item.id)
+            val list = _uiState.value.currentList
+            if (list?.isShared == true && list.shareCode != null && groupRepository != null) {
+                groupRepository.deleteSharedItem(list.shareCode, item.id.toString())
+            }
         }
     }
 

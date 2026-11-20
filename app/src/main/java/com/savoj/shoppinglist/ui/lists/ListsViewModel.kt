@@ -2,6 +2,7 @@ package com.savoj.shoppinglist.ui.lists
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.savoj.shoppinglist.data.remote.GroupShoppingRepository
 import com.savoj.shoppinglist.domain.model.ShoppingList
 import com.savoj.shoppinglist.domain.repository.ShoppingRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,13 +15,17 @@ import kotlinx.coroutines.launch
 data class ListsUiState(
     val lists: List<ShoppingList> = emptyList(),
     val showCreateDialog: Boolean = false,
+    val showJoinDialog: Boolean = false,
+    val isJoining: Boolean = false,
     val listToEdit: ShoppingList? = null,
     val listToDelete: ShoppingList? = null,
-    val toastMessage: String? = null
+    val toastMessage: String? = null,
+    val errorMessage: String? = null
 )
 
 class ListsViewModel(
-    private val repository: ShoppingRepository
+    private val repository: ShoppingRepository,
+    private val groupRepository: GroupShoppingRepository? = null
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ListsUiState())
@@ -35,6 +40,36 @@ class ListsViewModel(
 
     fun hideCreateDialog() {
         _uiState.value = _uiState.value.copy(showCreateDialog = false)
+    }
+
+    fun showJoinDialog() {
+        _uiState.value = _uiState.value.copy(showJoinDialog = true, errorMessage = null)
+    }
+
+    fun hideJoinDialog() {
+        _uiState.value = _uiState.value.copy(showJoinDialog = false, errorMessage = null)
+    }
+
+    fun joinSharedList(shareCode: String, onJoined: (Long) -> Unit) {
+        if (groupRepository == null) return
+        val code = shareCode.trim()
+        if (code.length != 6) {
+            _uiState.value = _uiState.value.copy(errorMessage = "Код має містити 6 символів")
+            return
+        }
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isJoining = true, errorMessage = null)
+            val result = groupRepository.joinSharedList(code)
+            _uiState.value = _uiState.value.copy(isJoining = false)
+            result.onSuccess { localId ->
+                hideJoinDialog()
+                onJoined(localId)
+            }.onFailure { err ->
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = err.message ?: "Не вдалося приєднатися до списку"
+                )
+            }
+        }
     }
 
     fun showEditDialog(list: ShoppingList) {

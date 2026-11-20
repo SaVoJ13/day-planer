@@ -28,6 +28,12 @@ interface ShoppingListDao {
     @Query("SELECT * FROM shopping_lists WHERE id = :id LIMIT 1")
     fun getListById(id: Long): Flow<ShoppingListEntity?>
 
+    @Query("SELECT * FROM shopping_lists WHERE share_code = :shareCode LIMIT 1")
+    suspend fun getListByShareCode(shareCode: String): ShoppingListEntity?
+
+    @Query("UPDATE shopping_lists SET is_shared = :isShared, share_code = :shareCode WHERE id = :listId")
+    suspend fun updateSharingStatus(listId: Long, isShared: Boolean, shareCode: String?): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertList(list: ShoppingListEntity): Long
 

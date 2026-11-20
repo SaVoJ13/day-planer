@@ -24,3 +24,6 @@
 | `androidx.room:*` | 2.6.1 | Google / AndroidX | Apache-2.0 | https://android.googlesource.com/platform/frameworks/support | Локальна SQLite БД | Перевірено ✅ |
 | `kotlinx.coroutines:*` | 1.9.0 | JetBrains | Apache-2.0 | https://github.com/Kotlin/kotlinx.coroutines | Асинхронні операції та Flow | Перевірено ✅ |
 | `junit:junit` | 4.13.2 | JUnit Team | EPL-1.0 | https://github.com/junit-team/junit4 | Модульне тестування (test scope) | Перевірено ✅ |
+| `com.google.firebase:firebase-bom` | 33.6.0 | Google / Firebase | Apache-2.0 | https://github.com/firebase/firebase-android-sdk | Білл матеріалів Firebase (BOM) | Перевірено ✅ |
+| `com.google.firebase:firebase-firestore-ktx` | 25.1.1 (via BOM) | Google / Firebase | Apache-2.0 | https://github.com/firebase/firebase-android-sdk | Хмарна БД Firestore реального часу | Перевірено ✅ |
+| `com.google.firebase:firebase-auth-ktx` | 23.1.0 (via BOM) | Google / Firebase | Apache-2.0 | https://github.com/firebase/firebase-android-sdk | Анонімна автентифікація користувачів | Перевірено ✅ |

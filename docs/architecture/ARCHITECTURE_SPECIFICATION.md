@@ -82,6 +82,10 @@ com.savoj.shoppinglist/
 - `created_at: Long` (Timestamp створення)
 - `is_archived: Boolean` (Статус архівації, default = false)
 - `order_index: Int` (Індекс сортування)
+- `is_shared: Boolean` (Статус спільного групового списку, додано у БД версії 2)
+- `share_code: String?` (Унікальний 6-значний PIN-код спільного доступу, додано у БД версії 2)
+
+> **Міграція схеми (Migration 1 -> 2):** Реалізовано через `MIGRATION_1_2` (`ALTER TABLE shopping_lists ADD COLUMN is_shared INTEGER NOT NULL DEFAULT 0; ALTER TABLE shopping_lists ADD COLUMN share_code TEXT DEFAULT NULL;`), що гарантує збереження всіх локальних списків користувачів без втрати даних.
 
 ### 3.2. ShoppingItemEntity
 Таблиця `shopping_items`:
@@ -114,12 +118,15 @@ com.savoj.shoppinglist/
 
 ---
 
-## 4. Політика безпеки та дозволів (Zero Network Audit)
-- У маніфесті `AndroidManifest.xml` для MVP **відсутній будь-який дозвіл**:
-  - ❌ `android.permission.INTERNET` — НЕ додається.
-  - ❌ `android.permission.ACCESS_NETWORK_STATE` — НЕ додається.
-  - ❌ Жодних небезпечних (Runtime) дозволів.
-- Застосунок не має технічної можливості виходу в мережу, що гарантує 100% збереження приватності користувача.
+## 4. Хмарна синхронізація спільних списків (Firebase Cloud Architecture)
+Згідно з рішенням Власника [Р-007], для функції спільних групових списків реалізовано гібридну архітектуру (Offline-First + Cloud Realtime):
+- **Мережеві дозволи:** Додано `android.permission.INTERNET` та `android.permission.ACCESS_NETWORK_STATE` виключно для обміну даними через Firebase Firestore.
+- **Анонімна автентифікація:** Використовується `FirebaseAuth.signInAnonymously()`. Користувачі не вводять пошту, паролі чи персональні дані.
+- **Структура Firestore:**
+  - `shared_lists/{shareCode}`: документ списку з полями `name`, `shareCode`, `creatorId`, `createdAt`, `updatedAt`.
+  - `shared_lists/{shareCode}/items/{itemId}`: підколекція товарів з полями `id`, `name`, `quantity`, `unit`, `categoryName`, `isBought`, `updatedAt`, `addedBy`.
+- **Безпека:** Доступ захищено правилами `firestore.rules` (Default Deny, Validator Function Pattern, `hasOnly`, обмеження розміру полів, видалення списку лише автором `creatorId`).
+- **Стійкість до офлайну:** Завдяки вбудованому кешуванню Firestore, застосунок працює навіть при тимчасовій втраті зв'язку в приміщеннях супермаркетів. Оновлення синхронізуються автоматично при появі мережі.
 
 ---
 
