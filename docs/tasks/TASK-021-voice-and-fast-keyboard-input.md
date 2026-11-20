@@ -7,7 +7,7 @@
 - **Назва:** Додавання голосового набору та оптимізація введення з клавіатури / швидких підказок
 - **Тип:** Feature / UX Enhancement
 - **Виконавці:** Android Developer, Localization Agent, Independent QA Agent
-- **Статус:** `In Progress`
+- **Статус:** `QA Verified`
 - **Гілка:** `task/012-voice-and-fast-keyboard-input`
 - **Дата створення:** 2026-11-20
 
@@ -43,17 +43,19 @@
 ---
 
 ## 3. Критерії готовності (DoD)
-- [ ] Оновлено `ShoppingRepositoryImpl.parseMultiLineText` для підтримки ком, крапок з комою, сполучників та перенесення рядків.
-- [ ] У `ListDetailsViewModel` додано метод `addSmartText(text)` для автоматичного пакетного додавання або відображення діалогу перевірки.
-- [ ] У `ListDetailsScreen.kt` реалізовано `RecognizerIntent` лаунчер для голосового вводу з іконкою мікрофона.
-- [ ] Додано `KeyboardOptions(imeAction = ImeAction.Done)` та `KeyboardActions` для безперервного швидкого набору.
-- [ ] Реалізовано горизонтальну смугу швидких чіпів над полем вводу.
-- [ ] Оновлено рядки локалізації для 4 мов (`uk`, `en`, `pl`, `ru`).
-- [ ] Пройдено всі модульні тести (`.\gradlew testDebugUnitTest`).
-- [ ] Зібрано та встановлено APK на телефон Власника (`adb install -r`).
-- [ ] Проведено незалежний аудит окремим QA-субагентом (`TASK-021_QA_VERIFICATION.md`).
+- [x] Оновлено `ShoppingRepositoryImpl.parseMultiLineText` для підтримки ком, крапок з комою, сполучників та перенесення рядків.
+- [x] У `ListDetailsViewModel` додано метод `addSmartItems(text)` для автоматичного пакетного додавання або відображення діалогу перевірки.
+- [x] У `ListDetailsScreen.kt` реалізовано `RecognizerIntent` лаунчер для голосового вводу з іконкою мікрофона.
+- [x] Додано `KeyboardOptions(imeAction = ImeAction.Done)` та `KeyboardActions` для безперервного швидкого набору.
+- [x] Реалізовано горизонтальну смугу швидких чіпів над полем вводу.
+- [x] Оновлено рядки локалізації для 4 мов (`uk`, `en`, `pl`, `ru`) у 5 файлах strings.xml.
+- [x] Пройдено всі модульні тести (`.\gradlew testDebugUnitTest`, 13/13).
+- [ ] Зібрано та встановлено APK на телефон Власника (`app-debug.apk` зібрано успішно, встановлення очікує підключення пристрою Власником через adb).
+- [x] Проведено незалежний аудит окремим QA-субагентом (`docs/qa/TASK-021_QA_VERIFICATION.md` — VERDICT: PASSED).
 
 ---
 
 ## 4. Журнал виконання (Append-only)
 - **2026-11-20 23:25:** Створено гілку `task/012-voice-and-fast-keyboard-input`. Сформовано специфікацію покращення UX введення.
+- **2026-11-20 23:30:** Реалізовано голосовий набір через системний RecognizerIntent, швидке введення списку з клавіатури, динамічну кнопку mic/add, хрестик очищення, стрічку підказок Quick Suggestion Chips та локалізацію на 4 мови. Створено коміт `32144a9`.
+- **2026-11-20 23:35:** Незалежний QA-аудит (субагент Antigravity). Перевірено 13/13 тестів (100% успішно), збірку `assembleDebug` (APK: 24.4 МБ), відсутність небезпечного дозволу `RECORD_AUDIO`, симетрію strings.xml (по 86 ключів). Складено звіт `docs/qa/TASK-021_QA_VERIFICATION.md` із вердиктом **QA VERIFIED 🟢 (VERDICT: PASSED)**.
