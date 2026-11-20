@@ -4,11 +4,11 @@
 
 ---
 
-- **Дата й час оновлення:** 2026-11-20 10:45 (CET)
-- **Поточний етап:** **Етап 4 — Реалізація MVP** (Етапи 0, 1, 2, 3 успішно завершено та QA-верифіковано)
-- **Поточний статус:** Етап 3 (Архітектура, Room схема, Zero Network аудит, Privacy Policy) верифіковано незалежним QA-агентом (`STAGE3_QA_VERIFICATION.md`), злито в `main` і синхронізовано з GitHub. Розпочато практичну реалізацію Android MVP.
-- **Поточна гілка:** `task/005-mvp-implementation`
-- **Останній коміт:** `caf10d8` (feat(arch-privacy): complete technical architecture, Room schema, privacy policy and Stage 3 QA verification)
+- **Дата й час оновлення:** 2026-11-20 11:15 (CET)
+- **Поточний етап:** **Етап 6 — Підготовка до закритого тестування й ASO** (Етапи 0, 1, 2, 3, 4, 5 повністю завершено та верифіковано QA)
+- **Поточний статус:** Зібрано нативний Android APK (`app-debug.apk`), усі 7 Unit-тестів успішно пройдено, реалізовано підтримку 4 мов, Room БД та Unidirectional Data Flow у Compose. Проведено комплексну верифікацію незалежним QA-субагентом (`STAGE4_5_QA_VERIFICATION.md`). Зміни злито в `main` і синхронізовано з GitHub.
+- **Поточна гілка:** `main`
+- **Останній коміт:** `e8dea31` (docs(qa): record independent QA verification report and update task cards for Stages 4 and 5)
 
 ---
 

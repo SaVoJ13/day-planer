@@ -36,30 +36,30 @@
 
 ---
 
-## Етап 4: Реалізація MVP (Поточний етап)
+## Етап 4: Реалізація MVP (Завершено)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-007** | Ініціалізація Android-проєкту (Gradle, Compose, Room, навігація, ресурси 4 мов) | Android Dev | `In Progress` | `task/005-mvp-implementation` | Структура Gradle, Room, локалізація, компіляція |
-| **TASK-008** | Сценарій 1: Створення, перейменування, видалення списків | Android Dev | `In Progress` | `task/005-mvp-implementation` | Списки, прогрес, скидання відміток |
-| **TASK-009** | Сценарій 2: Додавання, редагування, видалення товарів (кількість, категорії) | Android Dev | `In Progress` | `task/005-mvp-implementation` | Категорії, сортування, операції над товарами |
-| **TASK-010** | Сценарій 3: Позначення купленого, секція завершеного, повернення (Undo) | Android Dev | `In Progress` | `task/005-mvp-implementation` | Акордеон завершеного, чекбокси, Undo |
-| **TASK-011** | Сценарій 4: Повторне використання списків, шаблони, часті товари, Multi-line paste | Android Dev | `In Progress` | `task/005-mvp-implementation` | Пакетне вставлення тексту, RecentItems |
-| **TASK-012** | Сценарій 5: Мультимовність (налаштування мови, автовизначення, теми) | Android Dev | `In Progress` | `task/005-mvp-implementation` | Перемикання UK/EN/PL/RU, темна/світла теми |
+| **TASK-007** | Ініціалізація Android-проєкту (Gradle, Compose, Room, навігація, ресурси 4 мов) | Android Dev | **Done** | `main` | Структура Gradle, Room, локалізація, компіляція ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE4_5_QA_VERIFICATION.md)) |
+| **TASK-008** | Сценарій 1: Створення, перейменування, видалення списків | Android Dev | **Done** | `main` | Списки, прогрес, скидання відміток ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE4_5_QA_VERIFICATION.md)) |
+| **TASK-009** | Сценарій 2: Додавання, редагування, видалення товарів (кількість, категорії) | Android Dev | **Done** | `main` | Категорії, сортування, операції над товарами ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE4_5_QA_VERIFICATION.md)) |
+| **TASK-010** | Сценарій 3: Позначення купленого, секція завершеного, повернення (Undo) | Android Dev | **Done** | `main` | Акордеон завершеного, чекбокси, Undo ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE4_5_QA_VERIFICATION.md)) |
+| **TASK-011** | Сценарій 4: Повторне використання списків, шаблони, часті товари, Multi-line paste | Android Dev | **Done** | `main` | Пакетне вставлення тексту, RecentItems ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE4_5_QA_VERIFICATION.md)) |
+| **TASK-012** | Сценарій 5: Мультимовність (налаштування мови, автовизначення, теми) | Android Dev | **Done** | `main` | Перемикання UK/EN/PL/RU, темна/світла теми ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE4_5_QA_VERIFICATION.md)) |
 
 ---
 
-## Етап 5: Незалежне QA-тестування
+## Етап 5: Незалежне QA-тестування (Завершено)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-013** | Комплексна незалежна QA-перевірка функціоналу та локалізації | QA Agent | `Backlog` | - | `QA Verified` від окремого субагента, звіти перевірок |
+| **TASK-013** | Комплексна незалежна QA-перевірка функціоналу та локалізації | QA Agent | **Done** | `main` | `QA Verified` від окремого субагента ([Звіт QA](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE4_5_QA_VERIFICATION.md)) |
 
 ---
 
-## Етап 6: Підготовка до закритого тестування й ASO
+## Етап 6: Підготовка до закритого тестування й ASO (Поточний етап)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-014** | Підготовка метаданих Google Play (4 мови), скриншотів, Data Safety | ASO Agent | `Backlog` | - | Повний пакет для Play Console |
-| **TASK-015** | План закритого тестування (вимоги 14/20 тестувальників) | Lead | `Backlog` | - | Документований план дій для Власника |
+| **TASK-014** | Підготовка метаданих Google Play (4 мови), скриншотів, Data Safety | ASO Agent | `In Progress` | `task/006-store-and-testing-prep` | Повний пакет для Play Console |
+| **TASK-015** | План закритого тестування (вимоги 14 днів / 20 тестувальників) | Lead | `In Progress` | `task/006-store-and-testing-prep` | Документований план дій для Власника |
 
 ---
 
