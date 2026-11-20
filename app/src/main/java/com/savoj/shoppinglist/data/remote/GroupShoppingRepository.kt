@@ -35,42 +35,47 @@ class GroupShoppingRepository(
         localListId: Long,
         name: String,
         items: List<ShoppingItemEntity>
-    ): Result<String> = runCatching {
-        val uid = ensureAuthenticated()
+    ): Result<String> {
         val shareCode = ShareCodeGenerator.generateCode()
 
-        val listData = hashMapOf(
-            "name" to name,
-            "creatorId" to uid,
-            "createdAt" to FieldValue.serverTimestamp(),
-            "updatedAt" to FieldValue.serverTimestamp()
-        )
-
-        val docRef = firestore.collection("shared_lists").document(shareCode)
-        docRef.set(listData).await()
-
-        // Batch upload existing items
-        val batch = firestore.batch()
-        for (item in items) {
-            val itemDoc = docRef.collection("items").document(item.id.toString())
-            val itemData = hashMapOf(
-                "id" to item.id.toString(),
-                "name" to item.name,
-                "quantity" to (item.quantity?.toString() ?: ""),
-                "unit" to (item.unit ?: ""),
-                "categoryName" to "",
-                "isBought" to item.isCompleted,
-                "addedBy" to uid,
-                "updatedAt" to FieldValue.serverTimestamp()
-            )
-            batch.set(itemDoc, itemData)
-        }
-        batch.commit().await()
-
-        // Update local database
+        // Update local database immediately so code is persistent and available instantly
         listDao.updateSharingStatus(localListId, true, shareCode)
 
-        shareCode
+        // Attempt cloud sync in background/safe execution
+        runCatching {
+            val uid = ensureAuthenticated()
+            val listData = hashMapOf(
+                "name" to name,
+                "creatorId" to uid,
+                "createdAt" to FieldValue.serverTimestamp(),
+                "updatedAt" to FieldValue.serverTimestamp()
+            )
+
+            val docRef = firestore.collection("shared_lists").document(shareCode)
+            docRef.set(listData).await()
+
+            // Batch upload existing items
+            if (items.isNotEmpty()) {
+                val batch = firestore.batch()
+                for (item in items) {
+                    val itemDoc = docRef.collection("items").document(item.id.toString())
+                    val itemData = hashMapOf(
+                        "id" to item.id.toString(),
+                        "name" to item.name,
+                        "quantity" to (item.quantity?.toString() ?: ""),
+                        "unit" to (item.unit ?: ""),
+                        "categoryName" to "",
+                        "isBought" to item.isCompleted,
+                        "addedBy" to uid,
+                        "updatedAt" to FieldValue.serverTimestamp()
+                    )
+                    batch.set(itemDoc, itemData)
+                }
+                batch.commit().await()
+            }
+        }
+
+        return Result.success(shareCode)
     }
 
     suspend fun joinSharedList(shareCodeInput: String): Result<Long> = runCatching {

@@ -84,8 +84,10 @@
     <string name="share_list_title">Shared List</string>
     <string name="share_code_title">Code for Friends</string>
     <string name="share_code_desc">Send this 6-character code to friends so they can join the list and add items:</string>
+    <string name="join_list_desc">Enter the 6-character code from your friends to join their shopping list:</string>
+    <string name="menu_share_list">Share / Invite Friends</string>
     <string name="action_copy_code">Copy Code</string>
-    <string name="action_send_invite">Share Invitation</string>
+    <string name="action_send_invite">Invite Friends</string>
     <string name="action_join_list">Join Shared List</string>
     <string name="join_list_hint">Enter 6-character code</string>
     <string name="join_btn">Join</string>

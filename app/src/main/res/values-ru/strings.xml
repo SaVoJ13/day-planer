@@ -84,8 +84,10 @@
     <string name="share_list_title">Общий список</string>
     <string name="share_code_title">Код для друзей</string>
     <string name="share_code_desc">Отправьте этот 6-значный код друзьям, чтобы они могли присоединиться к списку и добавлять товары:</string>
+    <string name="join_list_desc">Введите 6-значный код, полученный от друзей, чтобы открыть общий список:</string>
+    <string name="menu_share_list">Общий доступ / Пригласить</string>
     <string name="action_copy_code">Скопировать код</string>
-    <string name="action_send_invite">Поделиться приглашением</string>
+    <string name="action_send_invite">Пригласить друзей</string>
     <string name="action_join_list">Присоединиться к списку</string>
     <string name="join_list_hint">Введите 6-значный код</string>
     <string name="join_btn">Присоединиться</string>

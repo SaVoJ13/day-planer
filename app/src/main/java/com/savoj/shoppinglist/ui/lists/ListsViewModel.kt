@@ -19,6 +19,7 @@ data class ListsUiState(
     val isJoining: Boolean = false,
     val listToEdit: ShoppingList? = null,
     val listToDelete: ShoppingList? = null,
+    val listToShare: ShoppingList? = null,
     val toastMessage: String? = null,
     val errorMessage: String? = null
 )
@@ -67,6 +68,30 @@ class ListsViewModel(
             }.onFailure { err ->
                 _uiState.value = _uiState.value.copy(
                     errorMessage = err.message ?: "Не вдалося приєднатися до списку"
+                )
+            }
+        }
+    }
+
+    fun showShareDialog(list: ShoppingList) {
+        if (list.isShared && !list.shareCode.isNullOrBlank()) {
+            _uiState.value = _uiState.value.copy(listToShare = list)
+        } else {
+            createAndShareList(list)
+        }
+    }
+
+    fun hideShareDialog() {
+        _uiState.value = _uiState.value.copy(listToShare = null)
+    }
+
+    fun createAndShareList(list: ShoppingList) {
+        if (groupRepository == null) return
+        viewModelScope.launch {
+            val result = groupRepository.createSharedList(list.id, list.name, emptyList())
+            result.onSuccess { code ->
+                _uiState.value = _uiState.value.copy(
+                    listToShare = list.copy(isShared = true, shareCode = code)
                 )
             }
         }

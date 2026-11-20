@@ -84,8 +84,10 @@
     <string name="share_list_title">Спільний список</string>
     <string name="share_code_title">Код для друзів</string>
     <string name="share_code_desc">Надішліть цей 6-значний код друзям, щоб вони могли приєднатися до списку та додавати товари:</string>
+    <string name="join_list_desc">Введіть 6-значний код, отриманий від друзів, щоб відкрити спільний список:</string>
+    <string name="menu_share_list">Спільний доступ / Запросити</string>
     <string name="action_copy_code">Скопіювати код</string>
-    <string name="action_send_invite">Поділитися запрошенням</string>
+    <string name="action_send_invite">Запросити друзів</string>
     <string name="action_join_list">Приєднатися до списку</string>
     <string name="join_list_hint">Введіть 6-значний код</string>
     <string name="join_btn">Приєднатися</string>

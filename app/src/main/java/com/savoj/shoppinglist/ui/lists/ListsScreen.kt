@@ -1,5 +1,10 @@
 package com.savoj.shoppinglist.ui.lists
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +26,7 @@ import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -35,6 +41,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -50,6 +57,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -67,6 +75,7 @@ fun ListsScreen(
 ) {
     val lists by viewModel.lists.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
 
     var newListName by remember { mutableStateOf("") }
     var editListName by remember { mutableStateOf("") }
@@ -133,7 +142,8 @@ fun ListsScreen(
                                 viewModel.showEditDialog(list)
                             },
                             onDeleteClick = { viewModel.showDeleteDialog(list) },
-                            onResetClick = { viewModel.resetAllItems(list.id) }
+                            onResetClick = { viewModel.resetAllItems(list.id) },
+                            onShareClick = { viewModel.showShareDialog(list) }
                         )
                     }
                 }
@@ -234,7 +244,7 @@ fun ListsScreen(
             text = {
                 Column {
                     Text(
-                        text = stringResource(R.string.share_code_desc),
+                        text = stringResource(R.string.join_list_desc),
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Spacer(modifier = Modifier.height(12.dp))
@@ -284,6 +294,84 @@ fun ListsScreen(
             }
         )
     }
+
+    // Share Code Dialog for list on main screen
+    uiState.listToShare?.let { sharedList ->
+        val shareCode = sharedList.shareCode ?: ""
+        AlertDialog(
+            onDismissRequest = { viewModel.hideShareDialog() },
+            title = {
+                Text(
+                    text = "${stringResource(R.string.share_list_title)}: ${sharedList.name}",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = stringResource(R.string.share_code_desc),
+                        style = MaterialTheme.typography.bodyMedium,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = shareCode,
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(vertical = 12.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        OutlinedButton(
+                            onClick = {
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                val clip = ClipData.newPlainText("Share Code", shareCode)
+                                clipboard?.setPrimaryClip(clip)
+                                Toast.makeText(context, context.getString(R.string.toast_code_copied), Toast.LENGTH_SHORT).show()
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(stringResource(R.string.action_copy_code))
+                        }
+                        Button(
+                            onClick = {
+                                val inviteText = context.getString(
+                                    R.string.share_invite_template,
+                                    sharedList.name,
+                                    shareCode
+                                )
+                                val sendIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, inviteText)
+                                    type = "text/plain"
+                                }
+                                context.startActivity(Intent.createChooser(sendIntent, null))
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(stringResource(R.string.action_send_invite))
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { viewModel.hideShareDialog() }) {
+                    Text(stringResource(R.string.action_close))
+                }
+            }
+        )
+    }
 }
 
 @Composable
@@ -292,7 +380,8 @@ fun ShoppingListCard(
     onClick: () -> Unit,
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
-    onResetClick: () -> Unit
+    onResetClick: () -> Unit,
+    onShareClick: () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     val progress = if (list.totalItems > 0) list.completedItems.toFloat() / list.totalItems else 0f
@@ -326,7 +415,8 @@ fun ShoppingListCard(
                         Spacer(modifier = Modifier.height(4.dp))
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.clickable { onShareClick() }
                         ) {
                             Row(
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
@@ -349,21 +439,38 @@ fun ShoppingListCard(
                     }
                 }
 
-                Box {
-                    IconButton(onClick = { menuExpanded = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = null)
-                    }
-                    DropdownMenu(
-                        expanded = menuExpanded,
-                        onDismissRequest = { menuExpanded = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.menu_reset_all_items)) },
-                            onClick = {
-                                menuExpanded = false
-                                onResetClick()
-                            }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onShareClick) {
+                        Icon(
+                            Icons.Default.Share,
+                            contentDescription = stringResource(R.string.menu_share_list),
+                            tint = if (list.isShared) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                    }
+
+                    Box {
+                        IconButton(onClick = { menuExpanded = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = null)
+                        }
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.menu_share_list)) },
+                                leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                                onClick = {
+                                    menuExpanded = false
+                                    onShareClick()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.menu_reset_all_items)) },
+                                onClick = {
+                                    menuExpanded = false
+                                    onResetClick()
+                                }
+                            )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.action_edit)) },
                             onClick = {
@@ -381,8 +488,9 @@ fun ShoppingListCard(
                     }
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
             LinearProgressIndicator(
                 progress = { progress },

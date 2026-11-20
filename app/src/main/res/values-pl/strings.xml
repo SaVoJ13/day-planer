@@ -84,8 +84,10 @@
     <string name="share_list_title">Wspólna lista</string>
     <string name="share_code_title">Kod dla znajomych</string>
     <string name="share_code_desc">Wyślij ten 6-znakowy kod znajomym, aby mogli dołączyć do listy i dodawać produkty:</string>
+    <string name="join_list_desc">Wpisz 6-znakowy kod otrzymany od znajomych, aby dołączyć do wspólnej listy:</string>
+    <string name="menu_share_list">Udostępnij / Zaproś</string>
     <string name="action_copy_code">Kopiuj kod</string>
-    <string name="action_send_invite">Udostępnij zaproszenie</string>
+    <string name="action_send_invite">Zaproś znajomych</string>
     <string name="action_join_list">Dołącz do listy</string>
     <string name="join_list_hint">Wpisz 6-znakowy kod</string>
     <string name="join_btn">Dołącz</string>
