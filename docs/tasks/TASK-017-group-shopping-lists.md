@@ -7,7 +7,7 @@
 - **Назва:** Реалізація групових списків у реальному часі (Firebase Firestore + Anonymous Auth)
 - **Етап:** 8 — Спільні списки
 - **Виконавці:** Android Developer, Localization Agent, Independent QA Agent
-- **Статус:** `In Progress`
+- **Статус:** `QA Verified`
 - **Гілка:** `task/008-group-shopping-lists`
 - **Дата створення:** 2026-11-20
 
@@ -33,8 +33,8 @@
 - [x] Оновлено UI (діалог приєднання до списку, бейдж спільного списку, діалог коду спільного доступу та шерингу).
 - [x] Додано переклади нових UI-рядків у 4 мовні файли (`strings.xml` для UK, EN, PL, RU).
 - [x] Написано Unit-тести для логіки групових списків (генератор коду, синхронізація, валідація) — 11 з 11 пройдено (100%).
-- [ ] Успішна збірка APK без помилок.
-- [ ] Незалежний аудит та `QA Verified` від окремого QA-субагента.
+- [x] Успішна збірка APK без помилок.
+- [x] Незалежний аудит та `QA Verified` від окремого QA-субагента ([Звіт](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE8_QA_VERIFICATION.md)).
 
 ---
 
@@ -43,3 +43,4 @@
 - **2026-11-20 11:36:** Спеціалізований субагент `firestore-rules-author` розробив загартовані правила `firestore.rules` (Default Deny, Validator Pattern, Schema Immutability).
 - **2026-11-20 11:40:** Оновлено схему Room (версія 2, `MIGRATION_1_2`), реалізовано `ShareCodeGenerator`, `GroupShoppingRepository`, оновлено UI (`ListsScreen`, `ListDetailsScreen`) та ресурси 4 мов.
 - **2026-11-20 11:45:** Проведено модульне тестування — 11 із 11 тестів успішно виконано (100% green). Запущено збірку APK.
+- **2026-11-20 11:54:** Незалежний QA-аудит: виявлено та усунено невідповідність схеми документа (`shareCode`) у `GroupShoppingRepository.kt` відносно `firestore.rules`. Проведено верифікацію міграції Room, правил безпеки, 4 мов локалізації, 11/11 модульних тестів та APK. Надано статус `QA Verified`.
