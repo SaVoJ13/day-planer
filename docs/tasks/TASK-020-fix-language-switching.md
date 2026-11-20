@@ -7,7 +7,7 @@
 - **Назва:** Виправлення застосування вибраної мови в інтерфейсі (UK, EN, PL, RU)
 - **Тип:** Bugfix / Localization
 - **Виконавці:** Android Developer, Localization Agent, Independent QA Agent
-- **Статус:** `In Progress`
+- **Статус:** `QA Verified`
 - **Гілка:** `task/011-fix-dynamic-language-switching`
 - **Дата створення:** 2026-11-20
 
@@ -38,17 +38,19 @@
 ---
 
 ## 3. Критерії готовності (DoD)
-- [ ] Оновлено `LocaleHelper.kt` з підтримкою `LocaleList`.
-- [ ] Оновлено `MainActivity.kt` (`attachBaseContext`, `LocalContext provides localizedContext`, `key(languageSetting)`).
-- [ ] Створено каталог та файл `app/src/main/res/values-uk/strings.xml`.
-- [ ] Додано ключ `lang_system` у всі файли локалізації (`values`, `values-uk`, `values-en`, `values-pl`, `values-ru`).
-- [ ] Оновлено `SettingsScreen.kt` з вибором `Системна / UK / EN / PL / RU`.
-- [ ] Успішні модульні тести (`.\gradlew testDebugUnitTest`).
-- [ ] Збірка APK (`.\gradlew assembleDebug`).
-- [ ] Встановлення на реальний телефон та перевірка перемикання мови на живому пристрої.
-- [ ] Незалежна верифікація окремим QA-субагентом.
+- [x] Оновлено `LocaleHelper.kt` з підтримкою `LocaleList`.
+- [x] Оновлено `MainActivity.kt` (`attachBaseContext`, `LocalContext provides localizedContext`, `key(languageSetting)`).
+- [x] Створено каталог та файл `app/src/main/res/values-uk/strings.xml`.
+- [x] Додано ключ `lang_system` у всі файли локалізації (`values`, `values-uk`, `values-en`, `values-pl`, `values-ru`).
+- [x] Оновлено `SettingsScreen.kt` з вибором `Системна / UK / EN / PL / RU`.
+- [x] Успішні модульні тести (`.\gradlew testDebugUnitTest`).
+- [x] Збірка APK (`.\gradlew assembleDebug`).
+- [x] Встановлення на реальний телефон та перевірка перемикання мови на живому пристрої.
+- [x] Незалежна верифікація окремим QA-субагентом.
 
 ---
 
 ## 4. Журнал виконання (Append-only)
 - **2026-11-20 23:03:** Створено гілку `task/011-fix-dynamic-language-switching`. Сформовано план виправлення.
+- **2026-11-20 23:10:** Виконано зміни коду в `MainActivity.kt`, `LocaleHelper.kt`, `SettingsScreen.kt`, створено `values-uk/strings.xml`, синхронізовано всі 5 файлів strings.xml (коміт `b5954ab`).
+- **2026-11-20 23:19:** Незалежний QA-агент провів повну сувору верифікацію: 11/11 тестів пройдено, APK зібрано, перевірено інсталяцію та живе динамічне перемикання мови (PL -> UK -> EN -> UK) на фізичному пристрої `RZCX326349A`. Складено звіт `docs/qa/TASK-020_QA_VERIFICATION.md`. Вердикт: `QA VERIFIED` 🟢.
