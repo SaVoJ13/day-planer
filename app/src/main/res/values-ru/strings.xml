@@ -80,6 +80,22 @@
     <string name="settings_version">Версия %1$s</string>
     <string name="settings_privacy_note">Полная конфиденциальность: данные хранятся только на вашем устройстве</string>
 
+    <!-- Общие списки покупок -->
+    <string name="share_list_title">Общий список</string>
+    <string name="share_code_title">Код для друзей</string>
+    <string name="share_code_desc">Отправьте этот 6-значный код друзьям, чтобы они могли присоединиться к списку и добавлять товары:</string>
+    <string name="action_copy_code">Скопировать код</string>
+    <string name="action_send_invite">Поделиться приглашением</string>
+    <string name="action_join_list">Присоединиться к списку</string>
+    <string name="join_list_hint">Введите 6-значный код</string>
+    <string name="join_btn">Присоединиться</string>
+    <string name="badge_shared">Общий</string>
+    <string name="toast_code_copied">Код скопирован в буфер</string>
+    <string name="toast_list_joined">Вы присоединились к списку!</string>
+    <string name="error_invalid_code">Код должен содержать 6 символов</string>
+    <string name="error_cloud_sync">Не удалось связаться с облаком. Проверьте интернет</string>
+    <string name="share_invite_template">Присоединяйся к моему списку покупок «%1$s»! Введи код в приложении: %2$s</string>
+
     <!-- Множественные формы (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d товар</item>

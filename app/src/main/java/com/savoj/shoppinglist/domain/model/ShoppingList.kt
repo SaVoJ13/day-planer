@@ -7,5 +7,7 @@ data class ShoppingList(
     val createdAt: Long = System.currentTimeMillis(),
     val totalItems: Int = 0,
     val completedItems: Int = 0,
-    val isArchived: Boolean = false
+    val isArchived: Boolean = false,
+    val isShared: Boolean = false,
+    val shareCode: String? = null
 )

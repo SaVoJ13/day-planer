@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "100000000001",
+    "project_id": "shopping-list-shared-demo",
+    "storage_bucket": "shopping-list-shared-demo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:100000000001:android:abcdef0123456789abcdef",
+        "android_client_info": {
+          "package_name": "com.savoj.shoppinglist"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDemoKeyForOfflineAndDevelopmentTestingOnly"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

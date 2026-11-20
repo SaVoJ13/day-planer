@@ -1,0 +1,151 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: shared_lists/{shareCode}
+    // Document ID: shareCode (4..32 alphanumeric/dash/underscore characters, e.g. 'K7P9X2')
+    // Fields:
+    //   - name: string (required, 1..100 characters) - Title of the shared shopping list
+    //   - createdAt: timestamp (required, immutable) - Timestamp when list was created
+    //   - updatedAt: timestamp (required) - Timestamp of last update
+    //   - creatorId: string (required, immutable, 1..128 chars) - Firebase Auth UID of creator
+    //
+    // Subcollection: shared_lists/{shareCode}/items/{itemId}
+    // Document ID: itemId (1..64 characters, matches id field)
+    // Fields:
+    //   - id: string (required, immutable, 1..64 chars, matches itemId) - Unique item identifier
+    //   - name: string (required, 1..100 characters) - Name of the shopping item
+    //   - quantity: string (required, 0..50 characters) - Quantity description (e.g., "2", "1.5 kg")
+    //   - unit: string (required, 0..20 characters) - Unit of measure (e.g., "шт", "кг")
+    //   - categoryName: string (required, 0..50 characters) - Category label
+    //   - isBought: bool (required) - Whether item is purchased
+    //   - updatedAt: timestamp (required) - Timestamp of last item update
+    //   - addedBy: string (optional, 0..128 characters) - UID or display name of user who added item
+    //
+    // ===============================================================
+
+    // Default Deny: Deny all reads and writes by default across the entire database
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the user is authenticated (including Firebase Anonymous Auth)
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Validate shareCode format (alphanumeric, dashes, underscores, 4..32 characters)
+    function isValidShareCode(code) {
+      return code is string &&
+             code.size() >= 4 &&
+             code.size() <= 32 &&
+             code.matches('^[a-zA-Z0-9_-]+$');
+    }
+
+    // Check if immutable fields remain unchanged during update
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators (Validator Function Pattern)
+    // ===============================================================
+
+    // Validate shared_lists document schema and field constraints
+    function isValidSharedList(data) {
+      let allowedFields = ['name', 'createdAt', 'updatedAt', 'creatorId'];
+      return data.keys().hasAll(allowedFields) &&
+             data.keys().hasOnly(allowedFields) &&
+             data.name is string &&
+             data.name.size() >= 1 &&
+             data.name.size() <= 100 &&
+             data.createdAt is timestamp &&
+             data.updatedAt is timestamp &&
+             data.creatorId is string &&
+             data.creatorId.size() >= 1 &&
+             data.creatorId.size() <= 128;
+    }
+
+    // Validate items document schema and field constraints
+    function isValidItem(data) {
+      let requiredFields = ['id', 'name', 'quantity', 'unit', 'categoryName', 'isBought', 'updatedAt'];
+      let allowedFields = ['id', 'name', 'quantity', 'unit', 'categoryName', 'isBought', 'updatedAt', 'addedBy'];
+      return data.keys().hasAll(requiredFields) &&
+             data.keys().hasOnly(allowedFields) &&
+             data.id is string &&
+             data.id.size() >= 1 &&
+             data.id.size() <= 64 &&
+             data.name is string &&
+             data.name.size() >= 1 &&
+             data.name.size() <= 100 &&
+             data.quantity is string &&
+             data.quantity.size() <= 50 &&
+             data.unit is string &&
+             data.unit.size() <= 20 &&
+             data.categoryName is string &&
+             data.categoryName.size() <= 50 &&
+             data.isBought is bool &&
+             data.updatedAt is timestamp &&
+             (!('addedBy' in data) || (data.addedBy is string && data.addedBy.size() <= 128));
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // Shared Shopping Lists Collection
+    match /shared_lists/{shareCode} {
+      // Any authenticated user who knows the shareCode can read list details
+      allow read: if isAuthenticated() && isValidShareCode(shareCode);
+
+      // Authenticated users can create a shared list with themselves as creator
+      allow create: if isAuthenticated() &&
+                       isValidShareCode(shareCode) &&
+                       request.resource.data.creatorId == request.auth.uid &&
+                       isValidSharedList(request.resource.data);
+
+      // Collaborators who know the shareCode can update name and updatedAt
+      // Immutable fields 'creatorId' and 'createdAt' cannot be altered
+      allow update: if isAuthenticated() &&
+                       isValidShareCode(shareCode) &&
+                       isValidSharedList(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['creatorId', 'createdAt']);
+
+      // Only the original list creator can delete the shared list
+      allow delete: if isAuthenticated() &&
+                       resource.data.creatorId == request.auth.uid;
+
+      // Subcollection: Shopping items in the shared list
+      match /items/{itemId} {
+        // Any authenticated user who knows the shareCode can view items
+        allow read: if isAuthenticated() && isValidShareCode(shareCode);
+
+        // Any authenticated collaborator can add new items to the shared list
+        allow create: if isAuthenticated() &&
+                         isValidShareCode(shareCode) &&
+                         request.resource.data.id == itemId &&
+                         isValidItem(request.resource.data);
+
+        // Any authenticated collaborator can update items (e.g., mark bought, update quantity)
+        // Item ID is immutable
+        allow update: if isAuthenticated() &&
+                         isValidShareCode(shareCode) &&
+                         isValidItem(request.resource.data) &&
+                         areImmutableFieldsUnchanged(['id']);
+
+        // Any authenticated collaborator can delete items from the shared list
+        allow delete: if isAuthenticated() &&
+                         isValidShareCode(shareCode);
+      }
+    }
+  }
+}

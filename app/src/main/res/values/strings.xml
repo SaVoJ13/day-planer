@@ -80,6 +80,22 @@
     <string name="settings_version">Версія %1$s</string>
     <string name="settings_privacy_note">Повна конфіденційність: дані зберігаються лише на вашому пристрої</string>
 
+    <!-- Спільні групові списки -->
+    <string name="share_list_title">Спільний список</string>
+    <string name="share_code_title">Код для друзів</string>
+    <string name="share_code_desc">Надішліть цей 6-значний код друзям, щоб вони могли приєднатися до списку та додавати товари:</string>
+    <string name="action_copy_code">Скопіювати код</string>
+    <string name="action_send_invite">Поділитися запрошенням</string>
+    <string name="action_join_list">Приєднатися до списку</string>
+    <string name="join_list_hint">Введіть 6-значний код</string>
+    <string name="join_btn">Приєднатися</string>
+    <string name="badge_shared">Спільний</string>
+    <string name="toast_code_copied">Код скопійовано в буфер</string>
+    <string name="toast_list_joined">Ви приєдналися до списку!</string>
+    <string name="error_invalid_code">Код має містити 6 символів</string>
+    <string name="error_cloud_sync">Не вдалося зв\'язатися з хмарою. Перевірте інтернет</string>
+    <string name="share_invite_template">Приєднуйся до мого списку покупок «%1$s»! Введи код у додатку: %2$s</string>
+
     <!-- Множини (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d товар</item>

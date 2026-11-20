@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.savoj.shoppinglist.data.local.AppDatabase
+import com.savoj.shoppinglist.data.remote.GroupShoppingRepository
 import com.savoj.shoppinglist.data.repository.SettingsRepositoryImpl
 import com.savoj.shoppinglist.data.repository.ShoppingRepositoryImpl
 import com.savoj.shoppinglist.ui.LocaleHelper
@@ -36,6 +37,12 @@ class MainActivity : ComponentActivity() {
         val database = AppDatabase.getInstance(this)
         val shoppingRepository = ShoppingRepositoryImpl(database)
         val settingsRepository = SettingsRepositoryImpl(this)
+        val groupRepository = runCatching {
+            GroupShoppingRepository(
+                listDao = database.shoppingListDao(),
+                itemDao = database.shoppingItemDao()
+            )
+        }.getOrNull()
 
         setContent {
             val settingsViewModel = remember { SettingsViewModel(settingsRepository) }
@@ -64,7 +71,7 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.Lists.route
                     ) {
                         composable(Screen.Lists.route) {
-                            val listsViewModel = remember { ListsViewModel(shoppingRepository) }
+                            val listsViewModel = remember { ListsViewModel(shoppingRepository, groupRepository) }
                             ListsScreen(
                                 viewModel = listsViewModel,
                                 onNavigateToListDetails = { listId ->
@@ -82,7 +89,7 @@ class MainActivity : ComponentActivity() {
                         ) { backStackEntry ->
                             val listId = backStackEntry.arguments?.getLong("listId") ?: 0L
                             val detailsViewModel = remember(listId) {
-                                ListDetailsViewModel(listId, shoppingRepository)
+                                ListDetailsViewModel(listId, shoppingRepository, groupRepository)
                             }
                             ListDetailsScreen(
                                 viewModel = detailsViewModel,

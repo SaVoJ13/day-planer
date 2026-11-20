@@ -80,6 +80,22 @@
     <string name="settings_version">Version %1$s</string>
     <string name="settings_privacy_note">Full privacy: data is stored only on your device</string>
 
+    <!-- Shared Group Lists -->
+    <string name="share_list_title">Shared List</string>
+    <string name="share_code_title">Code for Friends</string>
+    <string name="share_code_desc">Send this 6-character code to friends so they can join the list and add items:</string>
+    <string name="action_copy_code">Copy Code</string>
+    <string name="action_send_invite">Share Invitation</string>
+    <string name="action_join_list">Join Shared List</string>
+    <string name="join_list_hint">Enter 6-character code</string>
+    <string name="join_btn">Join</string>
+    <string name="badge_shared">Shared</string>
+    <string name="toast_code_copied">Code copied to clipboard</string>
+    <string name="toast_list_joined">You joined the list!</string>
+    <string name="error_invalid_code">Code must be 6 characters</string>
+    <string name="error_cloud_sync">Could not connect to cloud. Check internet</string>
+    <string name="share_invite_template">Join my shopping list \"%1$s\"! Enter code in app: %2$s</string>
+
     <!-- Plurals -->
     <plurals name="plural_items">
         <item quantity="one">%d item</item>

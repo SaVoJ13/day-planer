@@ -16,5 +16,9 @@ data class ShoppingListEntity(
     @ColumnInfo(name = "is_archived")
     val isArchived: Boolean = false,
     @ColumnInfo(name = "order_index")
-    val orderIndex: Int = 0
+    val orderIndex: Int = 0,
+    @ColumnInfo(name = "is_shared")
+    val isShared: Boolean = false,
+    @ColumnInfo(name = "share_code")
+    val shareCode: String? = null
 )
