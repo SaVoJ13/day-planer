@@ -41,7 +41,6 @@ class GroupShoppingRepository(
 
         val listData = hashMapOf(
             "name" to name,
-            "shareCode" to shareCode,
             "creatorId" to uid,
             "createdAt" to FieldValue.serverTimestamp(),
             "updatedAt" to FieldValue.serverTimestamp()
