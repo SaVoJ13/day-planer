@@ -81,3 +81,4 @@
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
 | **TASK-018** | Виправлення перекриття поля вводу системною навігаційною панеллю Android 15 (`enableEdgeToEdge`, `navigationBarsPadding`, `imePadding`) | Android Dev / QA | **Done** | `main` | Панель вводу повністю піднята над панеллю навігації, 11/11 тестів ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/TASK-018_QA_VERIFICATION.md)) |
+| **TASK-019** | Виправлення генерації коду (local-first у Room) та покращення UX запрошення до спільних покупок (кнопка шерингу на картці, розділення текстів приєднання та запрошення) | Android Dev / QA | **Done** | `main` | Код генерується миттєво без мережевих затримок, кнопка Share та меню на картці, 11/11 тестів ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/TASK-019_QA_VERIFICATION.md)) |
