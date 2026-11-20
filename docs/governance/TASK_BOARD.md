@@ -20,19 +20,19 @@
 
 ---
 
-## Етап 2: UX і локалізація (Поточний етап)
+## Етап 2: UX і локалізація (Завершено)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-003** | Проєктування інтерфейсу (екран списків, деталі, швидке додавання, налаштування) | UX/UI Agent | `In Progress` | `task/003-ux-and-localization` | Повні макети, адаптивність, темна тема, QA-перевірка |
-| **TASK-004** | Базова таблиця рядків локалізації (UK, RU, PL, EN) | Localization Agent | `In Progress` | `task/003-ux-and-localization` | Всі рядки без хардкоду, перевірені плюрали, QA-перевірка |
+| **TASK-003** | Проєктування інтерфейсу (екран списків, деталі, швидке додавання, налаштування) | UX/UI Agent | **Done** | `main` | Повні макети, адаптивність, темна тема ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE2_QA_VERIFICATION.md)) |
+| **TASK-004** | Базова таблиця рядків локалізації (UK, RU, PL, EN) | Localization Agent | **Done** | `main` | Всі рядки без хардкоду, перевірені плюрали ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE2_QA_VERIFICATION.md)) |
 
 ---
 
-## Етап 3: Архітектура й дозволи
+## Етап 3: Архітектура й дозволи (Поточний етап)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-005** | Технічне проєктування (Room entities, DAO, MVVM architecture) | Android Architect | `Backlog` | - | ADR, схема БД, план тестів |
-| **TASK-006** | Дослідження монетизації, Data Safety та Privacy Policy | Monetization Agent | `Backlog` | - | Варіанти банерної реклами, оцінка ризиків у `OWNER_INBOX` |
+| **TASK-005** | Технічне проєктування (Room entities, DAO, MVVM architecture, zero-network audit) | Android Architect | `In Progress` | `task/004-architecture-and-permissions` | ADR, схема БД, план тестів, QA-перевірка |
+| **TASK-006** | Дослідження монетизації, Data Safety та Privacy Policy | Monetization Agent | `In Progress` | `task/004-architecture-and-permissions` | Специфікація безпеки, чернетка Privacy Policy, QA-перевірка |
 
 ---
 

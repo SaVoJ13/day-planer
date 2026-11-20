@@ -4,11 +4,11 @@
 
 ---
 
-- **Дата й час оновлення:** 2026-11-20 10:35 (CET)
-- **Поточний етап:** **Етап 2 — UX і локалізація** (Етап 0 та Етап 1 успішно завершено й верифіковано QA)
-- **Поточний статус:** Етап 1 (Дослідження ринку та PRD) верифіковано незалежним QA-агентом (`STAGE1_QA_VERIFICATION.md`) та злито в `main` і синхронізовано з GitHub. Розпочато Етап 2.
-- **Поточна гілка:** `task/003-ux-and-localization`
-- **Останній коміт:** `1db5f97` (feat(product): complete competitor research, PRD specification and QA verification for Stage 1)
+- **Дата й час оновлення:** 2026-11-20 10:40 (CET)
+- **Поточний етап:** **Етап 3 — Архітектура й дозволи** (Етапи 0, 1, 2 завершено та QA-верифіковано)
+- **Поточний статус:** Етап 2 (UX і локалізація 4 мовами) верифіковано незалежним QA-агентом (`STAGE2_QA_VERIFICATION.md`), злито в `main` і відправлено на GitHub. Розпочато Етап 3.
+- **Поточна гілка:** `task/004-architecture-and-permissions`
+- **Останній коміт:** `416fdb1` (feat(ux-l10n): complete UX specifications, 4-language localization table and Stage 2 QA verification)
 
 ---
 
