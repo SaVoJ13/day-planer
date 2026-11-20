@@ -70,7 +70,7 @@
 
 ---
 
-## Етап 8: Спільні групові списки покупок (В роботі)
+## Етап 8: Спільні групові списки покупок (Завершено)
 | ID | Завдання | Виконавець | Статус | Гілка / PR | Критерій готовності |
 |---|---|---|---|---|---|
-| **TASK-017** | Реалізація спільних групових списків покупок (Firebase Firestore, Anonymous Auth, 6-значний код, QR/Share, реалтайм-синхронізація) | Android Dev / QA | **In Progress** | `task/008-group-shopping-lists` | Інтеграція Firebase, Room міграція v2, UI приєднання та спільного доступу, `QA Verified` від окремого QA-агента |
+| **TASK-017** | Реалізація спільних групових списків покупок (Firebase Firestore, Anonymous Auth, 6-значний код, QR/Share, реалтайм-синхронізація) | Android Dev / QA | **Done** | `main` | Інтеграція Firebase, Room міграція v2, UI приєднання та спільного доступу ([QA Verified](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/STAGE8_QA_VERIFICATION.md)) |
