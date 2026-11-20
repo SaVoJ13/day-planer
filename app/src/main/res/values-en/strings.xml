@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General navigation & actions -->
+    <string name="app_name">Shopping List</string>
+    <string name="nav_back">Back</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
+    <string name="action_add">Add</string>
+    <string name="action_share">Share list</string>
+    <string name="action_close">Close</string>
+
+    <!-- Main Screen (Lists) -->
+    <string name="lists_screen_title">My Lists</string>
+    <string name="lists_empty_title">You have no lists yet</string>
+    <string name="lists_empty_desc">Create your first list to plan shopping easily</string>
+    <string name="lists_create_button">Create list</string>
+    <string name="dialog_new_list_title">New list</string>
+    <string name="dialog_edit_list_title">Rename list</string>
+    <string name="list_name_hint">List name (e.g., Weekly groceries)</string>
+    <string name="dialog_delete_list_title">Delete list?</string>
+    <string name="dialog_delete_list_message">All items in this list will be permanently deleted.</string>
+    <string name="menu_reset_all_items">Uncheck all items</string>
+    <string name="toast_reset_success">All items marked as active</string>
+    <string name="progress_format">%1$d of %2$d bought</string>
+
+    <!-- List Details Screen -->
+    <string name="item_quick_add_hint">Add item...</string>
+    <string name="section_to_buy">To buy</string>
+    <string name="section_completed">Completed (%1$d)</string>
+    <string name="items_empty_title">List is empty</string>
+    <string name="items_empty_desc">Add items via the input below or paste text</string>
+    <string name="menu_clear_completed">Clear completed</string>
+    <string name="toast_item_added">Item added</string>
+    <string name="toast_item_deleted">Item deleted</string>
+    <string name="btn_undo">Undo</string>
+
+    <!-- Smart Multi-line Paste -->
+    <string name="paste_dialog_title">Add multiple items</string>
+    <string name="paste_dialog_desc">Found %1$d items in text:</string>
+    <string name="paste_btn_add_all">Add all (%1$d)</string>
+    <string name="paste_action_tooltip">Paste list from clipboard</string>
+
+    <!-- Frequent Items -->
+    <string name="recent_sheet_title">Frequent items</string>
+    <string name="recent_empty_desc">Items you add most often will appear here</string>
+
+    <!-- Categories -->
+    <string name="category_all">All categories</string>
+    <string name="category_fruits_vegetables">🥦 Fruits &amp; Vegetables</string>
+    <string name="category_dairy">🥛 Dairy</string>
+    <string name="category_meat_fish">🥩 Meat &amp; Fish</string>
+    <string name="category_bakery">🍞 Bakery</string>
+    <string name="category_grocery">🌾 Grocery &amp; Grains</string>
+    <string name="category_drinks">🧃 Beverages</string>
+    <string name="category_household">🧼 Household</string>
+    <string name="category_other">📦 Other</string>
+
+    <!-- Measurement Units -->
+    <string name="unit_pcs">pcs</string>
+    <string name="unit_kg">kg</string>
+    <string name="unit_g">g</string>
+    <string name="unit_l">l</string>
+    <string name="unit_pack">pack</string>
+
+    <!-- Settings -->
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">App Theme</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_language">App Language</string>
+    <string name="lang_uk">🇺🇦 Ukrainian</string>
+    <string name="lang_en">🇬🇧 English</string>
+    <string name="lang_pl">🇵🇱 Polish</string>
+    <string name="lang_ru">Russian</string>
+    <string name="settings_about">About</string>
+    <string name="settings_version">Version %1$s</string>
+    <string name="settings_privacy_note">Full privacy: data is stored only on your device</string>
+
+    <!-- Plurals -->
+    <plurals name="plural_items">
+        <item quantity="one">%d item</item>
+        <item quantity="other">%d items</item>
+    </plurals>
+
+    <plurals name="plural_lists">
+        <item quantity="one">%d list</item>
+        <item quantity="other">%d lists</item>
+    </plurals>
+</resources>

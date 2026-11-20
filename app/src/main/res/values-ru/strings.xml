@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Общая навигация и действия -->
+    <string name="app_name">Список покупок</string>
+    <string name="nav_back">Назад</string>
+    <string name="action_settings">Настройки</string>
+    <string name="action_save">Сохранить</string>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_edit">Редактировать</string>
+    <string name="action_add">Добавить</string>
+    <string name="action_share">Поделиться списком</string>
+    <string name="action_close">Закрыть</string>
+
+    <!-- Главный экран (Списки) -->
+    <string name="lists_screen_title">Мои списки</string>
+    <string name="lists_empty_title">У вас пока нет списков</string>
+    <string name="lists_empty_desc">Создайте первый список, чтобы удобно планировать покупки</string>
+    <string name="lists_create_button">Создать список</string>
+    <string name="dialog_new_list_title">Новый список</string>
+    <string name="dialog_edit_list_title">Переименовать список</string>
+    <string name="list_name_hint">Название списка (напр., Еженедельные покупки)</string>
+    <string name="dialog_delete_list_title">Удалить список?</string>
+    <string name="dialog_delete_list_message">Все товары в этом списке будут удалены безвозвратно.</string>
+    <string name="menu_reset_all_items">Сбросить все отметки</string>
+    <string name="toast_reset_success">Все товары снова активны</string>
+    <string name="progress_format">%1$d из %2$d куплено</string>
+
+    <!-- Экран деталей списка -->
+    <string name="item_quick_add_hint">Добавить товар...</string>
+    <string name="section_to_buy">Нужно купить</string>
+    <string name="section_completed">Куплено (%1$d)</string>
+    <string name="items_empty_title">Список пуст</string>
+    <string name="items_empty_desc">Добавьте товары через поле снизу или вставьте текст из буфера</string>
+    <string name="menu_clear_completed">Удалить купленные</string>
+    <string name="toast_item_added">Товар добавлен</string>
+    <string name="toast_item_deleted">Товар удален</string>
+    <string name="btn_undo">Отменить</string>
+
+    <!-- Умная многострочная вставка -->
+    <string name="paste_dialog_title">Добавить несколько товаров</string>
+    <string name="paste_dialog_desc">Найдено %1$d позиций в тексте:</string>
+    <string name="paste_btn_add_all">Добавить все (%1$d)</string>
+    <string name="paste_action_tooltip">Вставить список из буфера</string>
+
+    <!-- Частые покупки -->
+    <string name="recent_sheet_title">Частые товары</string>
+    <string name="recent_empty_desc">Здесь появятся товары, которые вы чаще всего добавляете</string>
+
+    <!-- Категории продуктов -->
+    <string name="category_all">Все категории</string>
+    <string name="category_fruits_vegetables">🥦 Овощи и фрукты</string>
+    <string name="category_dairy">🥛 Молочные продукты</string>
+    <string name="category_meat_fish">🥩 Мясо и рыба</string>
+    <string name="category_bakery">🍞 Хлеб и выпечка</string>
+    <string name="category_grocery">🌾 Бакалея и крупы</string>
+    <string name="category_drinks">🧃 Напитки</string>
+    <string name="category_household">🧼 Бытовая химия</string>
+    <string name="category_other">📦 Другое</string>
+
+    <!-- Единицы измерения -->
+    <string name="unit_pcs">шт</string>
+    <string name="unit_kg">кг</string>
+    <string name="unit_g">г</string>
+    <string name="unit_l">л</string>
+    <string name="unit_pack">уп</string>
+
+    <!-- Настройки -->
+    <string name="settings_appearance">Внешний вид</string>
+    <string name="settings_theme">Тема оформления</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Темная</string>
+    <string name="settings_language">Язык приложения</string>
+    <string name="lang_uk">🇺🇦 Украинский</string>
+    <string name="lang_en">🇬🇧 English</string>
+    <string name="lang_pl">🇵🇱 Польский</string>
+    <string name="lang_ru">Русский</string>
+    <string name="settings_about">О приложении</string>
+    <string name="settings_version">Версия %1$s</string>
+    <string name="settings_privacy_note">Полная конфиденциальность: данные хранятся только на вашем устройстве</string>
+
+    <!-- Множественные формы (Plurals) -->
+    <plurals name="plural_items">
+        <item quantity="one">%d товар</item>
+        <item quantity="few">%d товара</item>
+        <item quantity="many">%d товаров</item>
+        <item quantity="other">%d товаров</item>
+    </plurals>
+
+    <plurals name="plural_lists">
+        <item quantity="one">%d список</item>
+        <item quantity="few">%d списка</item>
+        <item quantity="many">%d списков</item>
+        <item quantity="other">%d списков</item>
+    </plurals>
+</resources>

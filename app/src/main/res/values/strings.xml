@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Загальні системні рядки та навігація -->
+    <string name="app_name">Список покупок</string>
+    <string name="nav_back">Назад</string>
+    <string name="action_settings">Налаштування</string>
+    <string name="action_save">Зберегти</string>
+    <string name="action_cancel">Скасувати</string>
+    <string name="action_delete">Видалити</string>
+    <string name="action_edit">Редагувати</string>
+    <string name="action_add">Додати</string>
+    <string name="action_share">Поділитися списком</string>
+    <string name="action_close">Закрити</string>
+
+    <!-- Головний екран (Списки покупок) -->
+    <string name="lists_screen_title">Мої списки</string>
+    <string name="lists_empty_title">У вас поки немає списків</string>
+    <string name="lists_empty_desc">Створіть перший список, щоб зручно планувати покупки</string>
+    <string name="lists_create_button">Створити список</string>
+    <string name="dialog_new_list_title">Новий список</string>
+    <string name="dialog_edit_list_title">Перейменувати список</string>
+    <string name="list_name_hint">Назва списку (напр., Щоденні покупки)</string>
+    <string name="dialog_delete_list_title">Видалити список?</string>
+    <string name="dialog_delete_list_message">Усі товари в цьому списку будуть видалені безповоротно.</string>
+    <string name="menu_reset_all_items">Скинути всі відмітки</string>
+    <string name="toast_reset_success">Усі товари знову активні</string>
+    <string name="progress_format">%1$d з %2$d куплено</string>
+
+    <!-- Екран деталей списку (Покупки) -->
+    <string name="item_quick_add_hint">Додати товар...</string>
+    <string name="section_to_buy">Потрібно купити</string>
+    <string name="section_completed">Куплено (%1$d)</string>
+    <string name="items_empty_title">Список порожній</string>
+    <string name="items_empty_desc">Додайте товари через поле знизу або вставте текст із буфера</string>
+    <string name="menu_clear_completed">Видалити куплені</string>
+    <string name="toast_item_added">Товар додано</string>
+    <string name="toast_item_deleted">Товар видалено</string>
+    <string name="btn_undo">Повернути</string>
+
+    <!-- Розумне мультирядкове вставлення -->
+    <string name="paste_dialog_title">Додати кілька товарів</string>
+    <string name="paste_dialog_desc">Знайдено %1$d позицій у тексті:</string>
+    <string name="paste_btn_add_all">Додати всі (%1$d)</string>
+    <string name="paste_action_tooltip">Вставити список із буфера</string>
+
+    <!-- Часті покупки -->
+    <string name="recent_sheet_title">Часті товари</string>
+    <string name="recent_empty_desc">Тут з\'являтимуться товари, які ви найчастіше додаєте</string>
+
+    <!-- Категорії продуктів -->
+    <string name="category_all">Всі категорії</string>
+    <string name="category_fruits_vegetables">🥦 Овочі та фрукти</string>
+    <string name="category_dairy">🥛 Молочні продукти</string>
+    <string name="category_meat_fish">🥩 М\'ясо та риба</string>
+    <string name="category_bakery">🍞 Хліб та випічка</string>
+    <string name="category_grocery">🌾 Бакалія та крупи</string>
+    <string name="category_drinks">🧃 Напої</string>
+    <string name="category_household">🧼 Побутова хімія</string>
+    <string name="category_other">📦 Інше</string>
+
+    <!-- Одиниці виміру -->
+    <string name="unit_pcs">шт</string>
+    <string name="unit_kg">кг</string>
+    <string name="unit_g">г</string>
+    <string name="unit_l">л</string>
+    <string name="unit_pack">уп</string>
+
+    <!-- Налаштування -->
+    <string name="settings_appearance">Зовнішній вигляд</string>
+    <string name="settings_theme">Тема оформлення</string>
+    <string name="theme_system">Як у системі</string>
+    <string name="theme_light">Світла</string>
+    <string name="theme_dark">Темна</string>
+    <string name="settings_language">Мова застосунку</string>
+    <string name="lang_uk">🇺🇦 Українська</string>
+    <string name="lang_en">🇬🇧 English</string>
+    <string name="lang_pl">🇵🇱 Polski</string>
+    <string name="lang_ru">Русский</string>
+    <string name="settings_about">Про застосунок</string>
+    <string name="settings_version">Версія %1$s</string>
+    <string name="settings_privacy_note">Повна конфіденційність: дані зберігаються лише на вашому пристрої</string>
+
+    <!-- Множини (Plurals) -->
+    <plurals name="plural_items">
+        <item quantity="one">%d товар</item>
+        <item quantity="few">%d товари</item>
+        <item quantity="many">%d товарів</item>
+        <item quantity="other">%d товарів</item>
+    </plurals>
+
+    <plurals name="plural_lists">
+        <item quantity="one">%d список</item>
+        <item quantity="few">%d списки</item>
+        <item quantity="many">%d списків</item>
+        <item quantity="other">%d списків</item>
+    </plurals>
+</resources>

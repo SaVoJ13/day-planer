@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Nawigacja i akcje -->
+    <string name="app_name">Lista zakupów</string>
+    <string name="nav_back">Wstecz</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="action_save">Zapisz</string>
+    <string name="action_cancel">Anuluj</string>
+    <string name="action_delete">Usuń</string>
+    <string name="action_edit">Edytuj</string>
+    <string name="action_add">Dodaj</string>
+    <string name="action_share">Udostępnij listę</string>
+    <string name="action_close">Zamknij</string>
+
+    <!-- Ekran główny (Listy zakupów) -->
+    <string name="lists_screen_title">Moje listy</string>
+    <string name="lists_empty_title">Nie masz jeszcze list</string>
+    <string name="lists_empty_desc">Utwórz pierwszą listę, aby łatwo planować zakupy</string>
+    <string name="lists_create_button">Utwórz listę</string>
+    <string name="dialog_new_list_title">Nowa lista</string>
+    <string name="dialog_edit_list_title">Zmień nazwę listy</string>
+    <string name="list_name_hint">Nazwa listy (np. Codzienne zakupy)</string>
+    <string name="dialog_delete_list_title">Usunąć listę?</string>
+    <string name="dialog_delete_list_message">Wszystkie pozycje na tej liście zostaną trwale usunięte.</string>
+    <string name="menu_reset_all_items">Odznacz wszystkie pozycje</string>
+    <string name="toast_reset_success">Wszystkie pozycje znów aktywne</string>
+    <string name="progress_format">Kupiono %1$d z %2$d</string>
+
+    <!-- Ekran szczegółów listy -->
+    <string name="item_quick_add_hint">Dodaj pozycję...</string>
+    <string name="section_to_buy">Do kupienia</string>
+    <string name="section_completed">Kupione (%1$d)</string>
+    <string name="items_empty_title">Lista jest pusta</string>
+    <string name="items_empty_desc">Dodaj pozycje poniżej lub wklej tekst ze schowka</string>
+    <string name="menu_clear_completed">Usuń kupione</string>
+    <string name="toast_item_added">Pozycja dodana</string>
+    <string name="toast_item_deleted">Pozycja usunięta</string>
+    <string name="btn_undo">Cofnij</string>
+
+    <!-- Inteligentne wklejanie wielu pozycji -->
+    <string name="paste_dialog_title">Dodaj wiele pozycji</string>
+    <string name="paste_dialog_desc">Znaleziono %1$d pozycji w tekście:</string>
+    <string name="paste_btn_add_all">Dodaj wszystkie (%1$d)</string>
+    <string name="paste_action_tooltip">Wklej listę ze schowka</string>
+
+    <!-- Częste pozycje -->
+    <string name="recent_sheet_title">Częste pozycje</string>
+    <string name="recent_empty_desc">Pozycje, które dodajesz najczęściej, pojawią się tutaj</string>
+
+    <!-- Kategorie -->
+    <string name="category_all">Wszystkie kategorie</string>
+    <string name="category_fruits_vegetables">🥦 Owoce i warzywa</string>
+    <string name="category_dairy">🥛 Nabiał</string>
+    <string name="category_meat_fish">🥩 Mięso i ryby</string>
+    <string name="category_bakery">🍞 Pieczywo</string>
+    <string name="category_grocery">🌾 Artykuły sypkie</string>
+    <string name="category_drinks">🧃 Napoje</string>
+    <string name="category_household">🧼 Środki czystości</string>
+    <string name="category_other">📦 Inne</string>
+
+    <!-- Jednostki miary -->
+    <string name="unit_pcs">szt</string>
+    <string name="unit_kg">kg</string>
+    <string name="unit_g">g</string>
+    <string name="unit_l">l</string>
+    <string name="unit_pack">op</string>
+
+    <!-- Ustawienia -->
+    <string name="settings_appearance">Wygląd</string>
+    <string name="settings_theme">Motyw aplikacji</string>
+    <string name="theme_system">Domyślny systemu</string>
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="settings_language">Język aplikacji</string>
+    <string name="lang_uk">🇺🇦 Ukraiński</string>
+    <string name="lang_en">🇬🇧 English</string>
+    <string name="lang_pl">🇵🇱 Polski</string>
+    <string name="lang_ru">Rosyjski</string>
+    <string name="settings_about">O aplikacji</string>
+    <string name="settings_version">Wersja %1$s</string>
+    <string name="settings_privacy_note">Pełna prywatność: dane są zapisywane tylko na Twoim urządzeniu</string>
+
+    <!-- Liczba mnoga (Plurals) -->
+    <plurals name="plural_items">
+        <item quantity="one">%d pozycja</item>
+        <item quantity="few">%d pozycje</item>
+        <item quantity="many">%d pozycji</item>
+        <item quantity="other">%d pozycji</item>
+    </plurals>
+
+    <plurals name="plural_lists">
+        <item quantity="one">%d lista</item>
+        <item quantity="few">%d listy</item>
+        <item quantity="many">%d list</item>
+        <item quantity="other">%d list</item>
+    </plurals>
+</resources>
