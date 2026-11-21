@@ -4,11 +4,11 @@
 
 ---
 
-- **Дата й час оновлення:** 2026-11-21 08:24 (CET)
-- **Поточний етап:** **Етап 8 + Bugfixes & Features TASK-018, TASK-019, TASK-020 & TASK-021 (Встановлено на пристрій, QA Verified)** 🟢
-- **Поточний статус:** Оновлений застосунок із голосовим набором, швидким введенням з клавіатури (ImeAction.Done, smart split) та стрічкою швидких підказок (TASK-021) успішно встановлено на підключений телефон Власника (`RZCX326349A`) через `adb install -r`. Застосунок запущено (PID 17191, 0 помилок).
+- **Дата й час оновлення:** 2026-11-21 08:35 (CET)
+- **Поточний етап:** **Етап 8 + Bugfixes TASK-018..022 (Встановлено на пристрій, QA Verified)** 🟢
+- **Поточний статус:** Критичний збій `No ActivityResultRegistryOwner` при вході в список покупок (TASK-022) повністю усунуто. Передано `LocalActivityResultRegistryOwner provides this` у `MainActivity.kt`. Успішно пройдено 13/13 модульних тестів (100%), оновлений APK встановлено на телефон `RZCX326349A`. Перехід у список `ListDetailsScreen` протестовано на живому пристрої (PID 22264, tap 400 500) — екран успішно відкривається, 0 падінь у logcat crash buffer. Верифіковано окремим QA-субагентом ([TASK-022_QA_VERIFICATION.md](file:///c:/Users/cocro/Downloads/day%20planer/docs/qa/TASK-022_QA_VERIFICATION.md)). Усі зміни злито в `main`.
 - **Поточна гілка:** `main`
-- **Останній коміт:** злиття гілки `task/012-voice-and-fast-keyboard-input` у `main`
+- **Останній коміт:** злиття гілки `task/013-fix-list-details-crash` у `main`
 
 ---
 

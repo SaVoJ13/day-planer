@@ -104,3 +104,17 @@
   8. Проведено незалежний аудит окремим QA-субагентом: отримано вердикт `QA Verified` (`docs/qa/TASK-021_QA_VERIFICATION.md`).
   9. Гілку `task/012-voice-and-fast-keyboard-input` злито в `main` та видалено.
 - **Результат:** Додавання товарів стало максимально швидким: доступний нативний голосовий набір, безперервний набір через Enter з авто-поділом за комами та швидкі чіпи в один дотик.
+
+---
+
+## Сесія 007 — 2026-11-21
+- **Мета сесії:** Термінове усунення критичного збою (FATAL EXCEPTION) при відкритті списку покупок (TASK-022).
+- **Що виконано:**
+  1. Зчитано crash stack trace з пристрою через `adb logcat -b crash`: виявлено `IllegalStateException: No ActivityResultRegistryOwner was provided via LocalActivityResultRegistryOwner` у `rememberLauncherForActivityResult`. Причиною було те, що `localizedContext` (створений для мовної локалізації через `createConfigurationContext`) не реалізує `ActivityResultRegistryOwner`.
+  2. У `MainActivity.kt` додано `LocalActivityResultRegistryOwner provides this` до `CompositionLocalProvider`.
+  3. Проведено компіляцію та успішно пройдено 13/13 модульних тестів (100% green).
+  4. Зібрано та встановлено оновлений APK на телефон Власника (`RZCX326349A`).
+  5. Проведено живий тест на пристрої: виконано натискання на картку списку (`input tap 400 500`). Зафіксовано коректне відкриття `ListDetailsScreen` (елементи списку, швидкі чіпи, поле вводу, кнопка мікрофона) та повну відсутність збоїв у logcat (`0 crash records`). Знято верифікаційний скриншот `list_details_verified.png`.
+  6. Проведено незалежний аудит окремим QA-субагентом: отримано вердикт `QA Verified` (`docs/qa/TASK-022_QA_VERIFICATION.md`).
+  7. Гілку `task/013-fix-list-details-crash` злито в `main` та видалено.
+- **Результат:** Критичний краш при вході в список повністю усунуто, підтверджено фактичними тестами на реальному пристрої.
