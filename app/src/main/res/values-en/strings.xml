@@ -117,6 +117,43 @@
     <string name="toast_list_unlocked">List unlocked for editing 🔓</string>
     <string name="badge_locked">Locked</string>
 
+    <!-- Wishlist -->
+    <string name="tab_shopping_lists">🛒 Shopping</string>
+    <string name="tab_wishlists">🎁 Wishlists</string>
+    <string name="create_wishlist_title">Create Wishlist</string>
+    <string name="wishlist_name_hint">Name (e.g. My Birthday)</string>
+    <string name="wishlist_occasion_label">Occasion / Event</string>
+    <string name="occasion_birthday">🎂 Birthday</string>
+    <string name="occasion_new_year">🎄 New Year / Christmas</string>
+    <string name="occasion_wedding">💍 Wedding</string>
+    <string name="occasion_housewarming">🏠 Housewarming</string>
+    <string name="occasion_other">🎉 Other occasion</string>
+    <string name="badge_wishlist">Wishlist</string>
+    <string name="action_add_gift">Add wish</string>
+    <string name="gift_item_hint">Gift item name...</string>
+    <string name="gift_url_hint">Store link (optional)</string>
+    <string name="action_open_store">To store ↗</string>
+    <string name="action_reserve_gift">🎁 Choose as gift</string>
+    <string name="action_cancel_reservation">Cancel reservation</string>
+    <string name="status_gift_reserved">Reserved by: %1$s</string>
+    <string name="status_gift_available">Available to gift</string>
+    <string name="reserve_dialog_title">Choose Gift</string>
+    <string name="reserve_dialog_desc">Enter your name so other guests know you are gifting this:</string>
+    <string name="reserve_name_hint">Your name</string>
+    <string name="action_confirm_reservation">Reserve</string>
+    <string name="toast_gift_reserved">Gift reserved successfully! 🎁</string>
+    <string name="toast_reservation_cancelled">Reservation cancelled</string>
+    <string name="dialog_select_list_type">Select List Type</string>
+    <string name="list_type_shopping">🛒 Shopping List</string>
+    <string name="list_type_wishlist">🎁 Wishlist</string>
+    <string name="wishlist_invite_template">Join my wishlist \"%1$s\"! Open code in app, choose a gift, and check store links: %2$s</string>
+    <string name="action_add_link">Add link</string>
+    <string name="edit_url_dialog_title">Store product link</string>
+    <string name="toast_invalid_url">Please enter a valid link (http/https)</string>
+    <string name="wishlist_empty_title">Wishlist is empty</string>
+    <string name="wishlist_empty_desc">Add desired gifts with store links and invite friends</string>
+    <string name="action_create_wishlist_btn">Create Wishlist</string>
+
     <!-- Plurals -->
     <plurals name="plural_items">
         <item quantity="one">%d item</item>

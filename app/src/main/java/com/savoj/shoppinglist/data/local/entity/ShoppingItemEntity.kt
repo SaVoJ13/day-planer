@@ -42,5 +42,11 @@ data class ShoppingItemEntity(
     @ColumnInfo(name = "created_at")
     val createdAt: Long = System.currentTimeMillis(),
     @ColumnInfo(name = "order_index")
-    val orderIndex: Int = 0
+    val orderIndex: Int = 0,
+    @ColumnInfo(name = "url")
+    val url: String? = null,
+    @ColumnInfo(name = "is_reserved")
+    val isReserved: Boolean = false,
+    @ColumnInfo(name = "reserved_by")
+    val reservedBy: String? = null
 )

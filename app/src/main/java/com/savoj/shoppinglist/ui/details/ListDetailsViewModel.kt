@@ -29,7 +29,9 @@ data class ListDetailsUiState(
     val showCompletedSection: Boolean = true,
     val showShareDialog: Boolean = false,
     val isSharingLoading: Boolean = false,
-    val shareError: String? = null
+    val shareError: String? = null,
+    val itemToReserve: ShoppingItem? = null,
+    val itemToEditUrl: ShoppingItem? = null
 )
 
 class ListDetailsViewModel(
@@ -108,10 +110,19 @@ class ListDetailsViewModel(
                     quantity = item.quantity,
                     unit = item.unit,
                     categoryId = item.categoryId,
-                    isCompleted = item.isCompleted
+                    isCompleted = item.isCompleted,
+                    url = item.url,
+                    isReserved = item.isReserved,
+                    reservedBy = item.reservedBy
                 )
             }
-            val result = groupRepository.createSharedList(listId, list.name, entityItems)
+            val result = groupRepository.createSharedList(
+                localListId = listId,
+                name = list.name,
+                items = entityItems,
+                isWishlist = list.isWishlist,
+                occasion = list.occasion
+            )
             _uiState.value = _uiState.value.copy(isSharingLoading = false)
             result.onSuccess { code ->
                 _uiState.value = _uiState.value.copy(
@@ -137,12 +148,65 @@ class ListDetailsViewModel(
         }
     }
 
-    fun addItem(name: String, quantity: Double? = null, unit: String? = null, categoryId: Long? = null) {
+    fun showReserveDialog(item: ShoppingItem) {
+        _uiState.value = _uiState.value.copy(itemToReserve = item)
+    }
+
+    fun hideReserveDialog() {
+        _uiState.value = _uiState.value.copy(itemToReserve = null)
+    }
+
+    fun reserveGift(item: ShoppingItem, guestName: String) {
+        val name = guestName.trim()
+        if (name.isBlank()) return
+        viewModelScope.launch {
+            repository.setItemReservation(item.id, true, name)
+            hideReserveDialog()
+            val list = _uiState.value.currentList
+            if (list?.isShared == true && list.shareCode != null && groupRepository != null) {
+                groupRepository.updateSharedItemReservation(list.shareCode, item.id.toString(), true, name)
+            }
+        }
+    }
+
+    fun cancelReservation(item: ShoppingItem) {
+        viewModelScope.launch {
+            repository.setItemReservation(item.id, false, null)
+            val list = _uiState.value.currentList
+            if (list?.isShared == true && list.shareCode != null && groupRepository != null) {
+                groupRepository.updateSharedItemReservation(list.shareCode, item.id.toString(), false, null)
+            }
+        }
+    }
+
+    fun showEditUrlDialog(item: ShoppingItem) {
+        _uiState.value = _uiState.value.copy(itemToEditUrl = item)
+    }
+
+    fun hideEditUrlDialog() {
+        _uiState.value = _uiState.value.copy(itemToEditUrl = null)
+    }
+
+    fun updateItemUrl(item: ShoppingItem, url: String) {
+        val cleanUrl = url.trim()
+        viewModelScope.launch {
+            repository.setItemUrl(item.id, cleanUrl.ifBlank { null })
+            hideEditUrlDialog()
+        }
+    }
+
+    fun addItem(
+        name: String,
+        quantity: Double? = null,
+        unit: String? = null,
+        categoryId: Long? = null,
+        url: String? = null
+    ) {
         if (_uiState.value.currentList?.isLocked == true) return
         val cleanName = ShoppingRepositoryImpl.cleanItemName(name)
         if (cleanName.isBlank()) return
         viewModelScope.launch {
-            repository.addItem(listId, cleanName, quantity, unit, categoryId)
+            repository.addItemWithUrl(listId, cleanName, url, quantity, unit, categoryId)
             val list = _uiState.value.currentList
             if (list?.isShared == true && list.shareCode != null && groupRepository != null) {
                 groupRepository.addSharedItem(
@@ -150,7 +214,8 @@ class ListDetailsViewModel(
                     name = cleanName,
                     quantity = quantity?.toString() ?: "",
                     unit = unit ?: "",
-                    categoryName = ""
+                    categoryName = "",
+                    url = url ?: ""
                 )
             }
         }

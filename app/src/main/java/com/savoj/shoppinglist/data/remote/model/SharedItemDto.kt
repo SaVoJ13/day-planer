@@ -9,6 +9,9 @@ data class SharedItemDto(
     val unit: String = "",
     val categoryName: String = "",
     val isBought: Boolean = false,
+    val url: String = "",
+    val isReserved: Boolean = false,
+    val reservedBy: String = "",
     val addedBy: String = "",
     val updatedAt: Timestamp? = null
 )

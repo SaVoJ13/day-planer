@@ -7,6 +7,8 @@ data class SharedListDto(
     val name: String = "",
     val shareCode: String = "",
     val creatorId: String = "",
+    val isWishlist: Boolean = false,
+    val occasion: String = "",
     val createdAt: Timestamp? = null,
     val updatedAt: Timestamp? = null
 )

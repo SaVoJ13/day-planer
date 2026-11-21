@@ -34,7 +34,9 @@ class ShoppingRepositoryImpl(
                     isArchived = stat.list.isArchived,
                     isShared = stat.list.isShared,
                     shareCode = stat.list.shareCode,
-                    isLocked = stat.list.isLocked
+                    isLocked = stat.list.isLocked,
+                    isWishlist = stat.list.isWishlist,
+                    occasion = stat.list.occasion
                 )
             }
         }
@@ -51,7 +53,9 @@ class ShoppingRepositoryImpl(
                     isArchived = it.isArchived,
                     isShared = it.isShared,
                     shareCode = it.shareCode,
-                    isLocked = it.isLocked
+                    isLocked = it.isLocked,
+                    isWishlist = it.isWishlist,
+                    occasion = it.occasion
                 )
             }
         }
@@ -66,6 +70,17 @@ class ShoppingRepositoryImpl(
         )
     }
 
+    override suspend fun createWishlist(name: String, occasion: String?, colorHex: String): Long {
+        return listDao.insertList(
+            ShoppingListEntity(
+                name = name.trim(),
+                colorHex = colorHex,
+                isWishlist = true,
+                occasion = occasion?.trim()
+            )
+        )
+    }
+
     override suspend fun updateList(list: ShoppingList) {
         listDao.updateList(
             ShoppingListEntity(
@@ -76,7 +91,9 @@ class ShoppingRepositoryImpl(
                 isArchived = list.isArchived,
                 isShared = list.isShared,
                 shareCode = list.shareCode,
-                isLocked = list.isLocked
+                isLocked = list.isLocked,
+                isWishlist = list.isWishlist,
+                occasion = list.occasion
             )
         )
     }
@@ -100,7 +117,10 @@ class ShoppingRepositoryImpl(
                     unit = entity.unit,
                     categoryId = entity.categoryId,
                     isCompleted = entity.isCompleted,
-                    createdAt = entity.createdAt
+                    createdAt = entity.createdAt,
+                    url = entity.url,
+                    isReserved = entity.isReserved,
+                    reservedBy = entity.reservedBy
                 )
             }
         }
@@ -113,16 +133,36 @@ class ShoppingRepositoryImpl(
         unit: String?,
         categoryId: Long?
     ): Long {
+        return addItemWithUrl(
+            listId = listId,
+            name = name,
+            url = null,
+            quantity = quantity,
+            unit = unit,
+            categoryId = categoryId
+        )
+    }
+
+    override suspend fun addItemWithUrl(
+        listId: Long,
+        name: String,
+        url: String?,
+        quantity: Double?,
+        unit: String?,
+        categoryId: Long?
+    ): Long {
         val cleanName = cleanItemName(name)
         if (cleanName.isEmpty()) return -1L
 
+        val cleanUrl = url?.trim()?.takeIf { it.isNotEmpty() }
         val entity = ShoppingItemEntity(
             listId = listId,
             name = cleanName,
             quantity = quantity,
             unit = unit,
             categoryId = categoryId,
-            isCompleted = false
+            isCompleted = false,
+            url = cleanUrl
         )
         val id = itemDao.insertItem(entity)
         recentDao.recordItemUsage(cleanName, categoryId)
@@ -160,9 +200,20 @@ class ShoppingRepositoryImpl(
                 unit = item.unit,
                 categoryId = item.categoryId,
                 isCompleted = item.isCompleted,
-                createdAt = item.createdAt
+                createdAt = item.createdAt,
+                url = item.url,
+                isReserved = item.isReserved,
+                reservedBy = item.reservedBy
             )
         )
+    }
+
+    override suspend fun setItemReservation(itemId: Long, isReserved: Boolean, reservedBy: String?) {
+        itemDao.updateReservationStatus(itemId, isReserved, reservedBy?.trim())
+    }
+
+    override suspend fun setItemUrl(itemId: Long, url: String?) {
+        itemDao.updateItemUrl(itemId, url?.trim()?.takeIf { it.isNotEmpty() })
     }
 
     override suspend fun setItemCompleted(itemId: Long, isCompleted: Boolean) {

@@ -117,6 +117,43 @@
     <string name="toast_list_unlocked">Список відімкнено для редагування 🔓</string>
     <string name="badge_locked">Закрито</string>
 
+    <!-- Wishlist (Списки бажань) -->
+    <string name="tab_shopping_lists">🛒 Покупки</string>
+    <string name="tab_wishlists">🎁 Бажання (Wishlist)</string>
+    <string name="create_wishlist_title">Створити список бажань</string>
+    <string name="wishlist_name_hint">Назва (напр. Мій День народження)</string>
+    <string name="wishlist_occasion_label">Свято / Подія</string>
+    <string name="occasion_birthday">🎂 День народження</string>
+    <string name="occasion_new_year">🎄 Новий рік / Різдво</string>
+    <string name="occasion_wedding">💍 Весілля</string>
+    <string name="occasion_housewarming">🏠 Новосілля</string>
+    <string name="occasion_other">🎉 Інше свято</string>
+    <string name="badge_wishlist">Wishlist</string>
+    <string name="action_add_gift">Додати бажання</string>
+    <string name="gift_item_hint">Назва подарунка...</string>
+    <string name="gift_url_hint">Посилання на магазин (необов\'язково)</string>
+    <string name="action_open_store">В магазин ↗</string>
+    <string name="action_reserve_gift">🎁 Обрати як подарунок</string>
+    <string name="action_cancel_reservation">Зняти бронь</string>
+    <string name="status_gift_reserved">Заброньовано: %1$s</string>
+    <string name="status_gift_available">Вільний для вибору</string>
+    <string name="reserve_dialog_title">Обрати подарунок</string>
+    <string name="reserve_dialog_desc">Введіть ваше ім\'я, щоб інші гості бачили, що цей подарунок даруєте ви:</string>
+    <string name="reserve_name_hint">Ваше ім\'я</string>
+    <string name="action_confirm_reservation">Забронювати</string>
+    <string name="toast_gift_reserved">Подарунок успішно обрано! 🎁</string>
+    <string name="toast_reservation_cancelled">Бронь знято</string>
+    <string name="dialog_select_list_type">Оберіть тип списку</string>
+    <string name="list_type_shopping">🛒 Список покупок</string>
+    <string name="list_type_wishlist">🎁 Список бажань (Wishlist)</string>
+    <string name="wishlist_invite_template">Приєднуйся до мого списку бажань \"%1$s\"! Відкрий код у застосунку, обери подарунок та переглянь посилання на магазини: %2$s</string>
+    <string name="action_add_link">Додати посилання</string>
+    <string name="edit_url_dialog_title">Посилання на товар з магазину</string>
+    <string name="toast_invalid_url">Будь ласка, введіть дійсне посилання (http/https)</string>
+    <string name="wishlist_empty_title">Список бажань порожній</string>
+    <string name="wishlist_empty_desc">Додайте бажані подарунки з посиланнями на магазини та запросіть друзів</string>
+    <string name="action_create_wishlist_btn">Створити список бажань</string>
+
     <!-- Множини (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d товар</item>

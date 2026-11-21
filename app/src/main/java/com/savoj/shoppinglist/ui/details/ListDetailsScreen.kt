@@ -5,6 +5,7 @@ import android.content.ClipDescription
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.speech.RecognizerIntent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -32,13 +33,16 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Mic
@@ -118,7 +122,25 @@ fun ListDetailsScreen(
     val activeItems = uiState.items.filter { !it.isCompleted }
     val completedItems = uiState.items.filter { it.isCompleted }
     val isLocked = uiState.currentList?.isLocked == true
+    val isWishlist = uiState.currentList?.isWishlist == true
     val isFullyCompleted = uiState.items.isNotEmpty() && activeItems.isEmpty()
+
+    var pendingGiftUrl by remember { mutableStateOf<String?>(null) }
+    var showInputUrlDialog by remember { mutableStateOf(false) }
+
+    val openUrl = { rawUrl: String ->
+        try {
+            val formattedUrl = if (!rawUrl.startsWith("http://") && !rawUrl.startsWith("https://")) {
+                "https://$rawUrl"
+            } else {
+                rawUrl
+            }
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(formattedUrl))
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            Toast.makeText(context, context.getString(R.string.toast_invalid_url), Toast.LENGTH_SHORT).show()
+        }
+    }
 
     val undoLabel = stringResource(R.string.btn_undo)
     val itemDeletedMessage = stringResource(R.string.toast_item_deleted)
@@ -175,6 +197,15 @@ fun ListDetailsScreen(
                 title = {
                     Column {
                         Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (isWishlist) {
+                                Icon(
+                                    Icons.Default.CardGiftcard,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                            }
                             Text(
                                 text = uiState.currentList?.name ?: "",
                                 style = MaterialTheme.typography.titleMedium,
@@ -192,8 +223,13 @@ fun ListDetailsScreen(
                                 )
                             }
                         }
+                        val subtitle = if (isWishlist && !uiState.currentList?.occasion.isNullOrBlank()) {
+                            "${uiState.currentList?.occasion} • ${stringResource(R.string.progress_format, completedItems.size, uiState.items.size)}"
+                        } else {
+                            stringResource(R.string.progress_format, completedItems.size, uiState.items.size)
+                        }
                         Text(
-                            text = stringResource(R.string.progress_format, completedItems.size, uiState.items.size),
+                            text = subtitle,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -238,8 +274,15 @@ fun ListDetailsScreen(
                     IconButton(onClick = {
                         val shareText = buildString {
                             appendLine(uiState.currentList?.name ?: "")
+                            if (isWishlist && !uiState.currentList?.occasion.isNullOrBlank()) {
+                                appendLine(uiState.currentList?.occasion)
+                            }
                             appendLine("---")
-                            activeItems.forEach { appendLine("• ${it.name}") }
+                            activeItems.forEach {
+                                val urlPart = if (!it.url.isNullOrBlank()) " (${it.url})" else ""
+                                val reservedPart = if (it.isReserved) " [${it.reservedBy}]" else ""
+                                appendLine("• ${it.name}$urlPart$reservedPart")
+                            }
                         }
                         val sendIntent = Intent().apply {
                             action = Intent.ACTION_SEND
@@ -364,8 +407,8 @@ fun ListDetailsScreen(
                             .fillMaxWidth()
                             .navigationBarsPadding()
                     ) {
-                        // Quick Suggestion Chips Row
-                        if (suggestions.isNotEmpty()) {
+                        // Quick Suggestion Chips Row (shopping list mode only)
+                        if (!isWishlist && suggestions.isNotEmpty()) {
                             LazyRow(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -387,6 +430,48 @@ fun ListDetailsScreen(
                             }
                         }
 
+                        // Wishlist attached URL indicator
+                        if (isWishlist && pendingGiftUrl != null) {
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = MaterialTheme.colorScheme.primaryContainer,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp, vertical = 4.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.Link,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(14.dp),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text(
+                                        text = pendingGiftUrl ?: "",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    IconButton(
+                                        onClick = { pendingGiftUrl = null },
+                                        modifier = Modifier.size(20.dp)
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Close,
+                                            contentDescription = stringResource(R.string.action_cancel),
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                         // Input Row
                         Row(
                             modifier = Modifier
@@ -394,28 +479,42 @@ fun ListDetailsScreen(
                                 .padding(horizontal = 8.dp, vertical = 4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton(
-                                onClick = {
-                                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                    val clipText = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
-                                    if (clipText.isNotBlank()) {
-                                        viewModel.onClipboardPasted(clipText)
+                            if (!isWishlist) {
+                                IconButton(
+                                    onClick = {
+                                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                        val clipText = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+                                        if (clipText.isNotBlank()) {
+                                            viewModel.onClipboardPasted(clipText)
+                                        }
                                     }
+                                ) {
+                                    Icon(Icons.Default.ContentPaste, contentDescription = stringResource(R.string.paste_action_tooltip))
                                 }
-                            ) {
-                                Icon(Icons.Default.ContentPaste, contentDescription = stringResource(R.string.paste_action_tooltip))
-                            }
 
-                            IconButton(
-                                onClick = { viewModel.setRecentSheetVisible(true) }
-                            ) {
-                                Icon(Icons.Default.Star, contentDescription = stringResource(R.string.recent_sheet_title))
+                                IconButton(
+                                    onClick = { viewModel.setRecentSheetVisible(true) }
+                                ) {
+                                    Icon(Icons.Default.Star, contentDescription = stringResource(R.string.recent_sheet_title))
+                                }
+                            } else {
+                                IconButton(
+                                    onClick = { showInputUrlDialog = true }
+                                ) {
+                                    Icon(
+                                        Icons.Default.Link,
+                                        contentDescription = stringResource(R.string.gift_url_hint),
+                                        tint = if (pendingGiftUrl != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
                             }
 
                             OutlinedTextField(
                                 value = inputItemName,
                                 onValueChange = { inputItemName = it },
-                                placeholder = { Text(stringResource(R.string.item_quick_add_hint)) },
+                                placeholder = {
+                                    Text(stringResource(if (isWishlist) R.string.gift_item_hint else R.string.item_quick_add_hint))
+                                },
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(
                                     imeAction = ImeAction.Done,
@@ -424,11 +523,17 @@ fun ListDetailsScreen(
                                 keyboardActions = KeyboardActions(
                                     onDone = {
                                         if (inputItemName.isNotBlank()) {
-                                            val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
-                                            viewModel.addSmartItems(inputItemName)
-                                            inputItemName = ""
-                                            if (count > 1) {
-                                                Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
+                                            if (isWishlist) {
+                                                viewModel.addItem(name = inputItemName, url = pendingGiftUrl)
+                                                inputItemName = ""
+                                                pendingGiftUrl = null
+                                            } else {
+                                                val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
+                                                viewModel.addSmartItems(inputItemName)
+                                                inputItemName = ""
+                                                if (count > 1) {
+                                                    Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
+                                                }
                                             }
                                         }
                                     }
@@ -452,11 +557,17 @@ fun ListDetailsScreen(
                             if (inputItemName.isNotBlank()) {
                                 IconButton(
                                     onClick = {
-                                        val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
-                                        viewModel.addSmartItems(inputItemName)
-                                        inputItemName = ""
-                                        if (count > 1) {
-                                            Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
+                                        if (isWishlist) {
+                                            viewModel.addItem(name = inputItemName, url = pendingGiftUrl)
+                                            inputItemName = ""
+                                            pendingGiftUrl = null
+                                        } else {
+                                            val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
+                                            viewModel.addSmartItems(inputItemName)
+                                            inputItemName = ""
+                                            if (count > 1) {
+                                                Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
+                                            }
                                         }
                                     }
                                 ) {
@@ -629,6 +740,7 @@ fun ListDetailsScreen(
                 items(activeItems, key = { it.id }) { item ->
                     ShoppingItemRow(
                         item = item,
+                        isWishlist = isWishlist,
                         isLocked = isLocked,
                         onToggle = { viewModel.toggleItemCompleted(item) },
                         onDelete = {
@@ -644,6 +756,10 @@ fun ListDetailsScreen(
                                 }
                             }
                         },
+                        onOpenUrl = openUrl,
+                        onEditUrl = { viewModel.showEditUrlDialog(item) },
+                        onReserve = { viewModel.showReserveDialog(item) },
+                        onCancelReserve = { viewModel.cancelReservation(item) },
                         onLockedAttempt = {
                             Toast.makeText(context, context.getString(R.string.toast_list_locked), Toast.LENGTH_SHORT).show()
                         }
@@ -679,9 +795,14 @@ fun ListDetailsScreen(
                         items(completedItems, key = { it.id }) { item ->
                             ShoppingItemRow(
                                 item = item,
+                                isWishlist = isWishlist,
                                 isLocked = isLocked,
                                 onToggle = { viewModel.toggleItemCompleted(item) },
                                 onDelete = { viewModel.deleteItem(item) },
+                                onOpenUrl = openUrl,
+                                onEditUrl = { viewModel.showEditUrlDialog(item) },
+                                onReserve = { viewModel.showReserveDialog(item) },
+                                onCancelReserve = { viewModel.cancelReservation(item) },
                                 onLockedAttempt = {
                                     Toast.makeText(context, context.getString(R.string.toast_list_locked), Toast.LENGTH_SHORT).show()
                                 }
@@ -864,8 +985,13 @@ fun ListDetailsScreen(
                             }
                             Button(
                                 onClick = {
+                                    val templateRes = if (isWishlist) {
+                                        R.string.wishlist_invite_template
+                                    } else {
+                                        R.string.share_invite_template
+                                    }
                                     val inviteText = context.getString(
-                                        R.string.share_invite_template,
+                                        templateRes,
                                         uiState.currentList?.name ?: "",
                                         shareCode
                                     )
@@ -891,14 +1017,181 @@ fun ListDetailsScreen(
             }
         )
     }
+
+    // Reserve Gift Dialog
+    uiState.itemToReserve?.let { targetGift ->
+        var guestName by remember(targetGift) { mutableStateOf("") }
+        AlertDialog(
+            onDismissRequest = { viewModel.hideReserveDialog() },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.CardGiftcard,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.reserve_dialog_title), fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column {
+                    Text(
+                        text = stringResource(R.string.reserve_dialog_desc),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    OutlinedTextField(
+                        value = guestName,
+                        onValueChange = { guestName = it },
+                        label = { Text(stringResource(R.string.reserve_name_hint)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.reserveGift(targetGift, guestName)
+                        Toast.makeText(context, context.getString(R.string.toast_gift_reserved), Toast.LENGTH_SHORT).show()
+                    },
+                    enabled = guestName.isNotBlank()
+                ) {
+                    Text(stringResource(R.string.action_confirm_reservation))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.hideReserveDialog() }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    }
+
+    // Edit Item URL Dialog
+    uiState.itemToEditUrl?.let { targetItem ->
+        var inputUrl by remember(targetItem) { mutableStateOf(targetItem.url ?: "") }
+        AlertDialog(
+            onDismissRequest = { viewModel.hideEditUrlDialog() },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.Link,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.edit_url_dialog_title), fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = inputUrl,
+                        onValueChange = { inputUrl = it },
+                        label = { Text(stringResource(R.string.gift_url_hint)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextButton(
+                        onClick = {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                            val clip = clipboard?.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+                            if (clip.isNotBlank()) inputUrl = clip
+                        }
+                    ) {
+                        Icon(Icons.Default.ContentPaste, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(stringResource(R.string.paste_action_tooltip))
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.updateItemUrl(targetItem, inputUrl) }
+                ) {
+                    Text(stringResource(R.string.action_save))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.hideEditUrlDialog() }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    }
+
+    // Input Gift URL Dialog (for bottom bar)
+    if (showInputUrlDialog) {
+        var tempUrl by remember { mutableStateOf(pendingGiftUrl ?: "") }
+        AlertDialog(
+            onDismissRequest = { showInputUrlDialog = false },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.Link,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.action_add_link), fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = tempUrl,
+                        onValueChange = { tempUrl = it },
+                        label = { Text(stringResource(R.string.gift_url_hint)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    TextButton(
+                        onClick = {
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                            val clip = clipboard?.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+                            if (clip.isNotBlank()) tempUrl = clip
+                        }
+                    ) {
+                        Icon(Icons.Default.ContentPaste, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(stringResource(R.string.paste_action_tooltip))
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        pendingGiftUrl = tempUrl.trim().ifBlank { null }
+                        showInputUrlDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.action_save))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showInputUrlDialog = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
+    }
 }
 
 @Composable
 fun ShoppingItemRow(
     item: ShoppingItem,
+    isWishlist: Boolean = false,
     isLocked: Boolean = false,
     onToggle: () -> Unit,
     onDelete: () -> Unit,
+    onOpenUrl: (String) -> Unit = {},
+    onEditUrl: () -> Unit = {},
+    onReserve: () -> Unit = {},
+    onCancelReserve: () -> Unit = {},
     onLockedAttempt: () -> Unit = {}
 ) {
     Card(
@@ -907,52 +1200,165 @@ fun ShoppingItemRow(
             .clickable(onClick = {
                 if (isLocked) onLockedAttempt() else onToggle()
             }),
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (item.isCompleted) {
                 MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            } else if (item.isReserved) {
+                MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.35f)
             } else {
                 MaterialTheme.colorScheme.surface
             }
         )
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Checkbox(
-                checked = item.isCompleted,
-                enabled = !isLocked,
-                onCheckedChange = {
-                    if (isLocked) onLockedAttempt() else onToggle()
-                },
-                modifier = Modifier.size(48.dp) // Accessibility: 48dp touch target
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.bodyLarge,
-                textDecoration = if (item.isCompleted) TextDecoration.LineThrough else TextDecoration.None,
-                color = if (item.isCompleted) {
-                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
-                modifier = Modifier.weight(1f)
-            )
-            if (!isLocked) {
-                IconButton(
-                    onClick = onDelete,
-                    modifier = Modifier.size(48.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = stringResource(R.string.action_delete),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                        modifier = Modifier.size(20.dp)
+        Column(modifier = Modifier.padding(10.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Checkbox(
+                    checked = item.isCompleted,
+                    enabled = !isLocked,
+                    onCheckedChange = {
+                        if (isLocked) onLockedAttempt() else onToggle()
+                    },
+                    modifier = Modifier.size(40.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = item.name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Medium,
+                        textDecoration = if (item.isCompleted) TextDecoration.LineThrough else TextDecoration.None,
+                        color = if (item.isCompleted) {
+                            MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
                     )
+                }
+                if (!isLocked) {
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier.size(40.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = stringResource(R.string.action_delete),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
+
+            // Wishlist actions and metadata
+            if (isWishlist) {
+                Spacer(modifier = Modifier.height(4.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 44.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    // Store URL link
+                    if (!item.url.isNullOrBlank()) {
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            modifier = Modifier.clickable { onOpenUrl(item.url) }
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    Icons.AutoMirrored.Filled.OpenInNew,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(14.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = stringResource(R.string.action_open_store),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                        }
+                    } else if (!isLocked) {
+                        TextButton(
+                            onClick = onEditUrl,
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 4.dp, vertical = 2.dp),
+                            modifier = Modifier.height(28.dp)
+                        ) {
+                            Icon(Icons.Default.Link, contentDescription = null, modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = stringResource(R.string.action_add_link),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    // Reservation status and toggle
+                    if (item.isReserved) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = MaterialTheme.colorScheme.secondaryContainer
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.CardGiftcard,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(12.dp),
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = stringResource(R.string.status_gift_reserved, item.reservedBy ?: ""),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                }
+                            }
+                            if (!isLocked) {
+                                Spacer(modifier = Modifier.width(4.dp))
+                                TextButton(
+                                    onClick = onCancelReserve,
+                                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 4.dp, vertical = 2.dp),
+                                    modifier = Modifier.height(28.dp)
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.action_cancel_reservation),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                }
+                            }
+                        }
+                    } else if (!isLocked) {
+                        Button(
+                            onClick = onReserve,
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                            modifier = Modifier.height(28.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.action_reserve_gift),
+                                style = MaterialTheme.typography.labelSmall
+                            )
+                        }
+                    }
                 }
             }
         }

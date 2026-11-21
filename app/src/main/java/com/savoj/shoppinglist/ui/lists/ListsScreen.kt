@@ -18,10 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material.icons.filled.Lock
@@ -38,6 +40,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -45,8 +48,10 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -102,26 +107,64 @@ fun ListsScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    newListName = ""
-                    viewModel.showCreateDialog()
+                    if (uiState.selectedTab == 1) {
+                        viewModel.showCreateWishlistDialog()
+                    } else {
+                        newListName = ""
+                        viewModel.showCreateDialog()
+                    }
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.lists_create_button))
+                Icon(
+                    imageVector = if (uiState.selectedTab == 1) Icons.Default.CardGiftcard else Icons.Default.Add,
+                    contentDescription = if (uiState.selectedTab == 1) stringResource(R.string.create_wishlist_title) else stringResource(R.string.lists_create_button)
+                )
             }
         }
     ) { paddingValues ->
+        val displayedLists = remember(lists, uiState.selectedTab) {
+            if (uiState.selectedTab == 1) {
+                lists.filter { it.isWishlist }
+            } else {
+                lists.filter { !it.isWishlist }
+            }
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (lists.isEmpty()) {
+            PrimaryTabRow(
+                selectedTabIndex = uiState.selectedTab,
+                containerColor = MaterialTheme.colorScheme.surface
+            ) {
+                Tab(
+                    selected = uiState.selectedTab == 0,
+                    onClick = { viewModel.setTab(0) },
+                    text = { Text(stringResource(R.string.tab_shopping_lists), fontWeight = FontWeight.SemiBold) },
+                    icon = { Icon(Icons.Default.ShoppingCart, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                )
+                Tab(
+                    selected = uiState.selectedTab == 1,
+                    onClick = { viewModel.setTab(1) },
+                    text = { Text(stringResource(R.string.tab_wishlists), fontWeight = FontWeight.SemiBold) },
+                    icon = { Icon(Icons.Default.CardGiftcard, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                )
+            }
+
+            if (displayedLists.isEmpty()) {
                 EmptyListsView(
+                    isWishlist = uiState.selectedTab == 1,
                     onCreateClick = {
-                        newListName = ""
-                        viewModel.showCreateDialog()
+                        if (uiState.selectedTab == 1) {
+                            viewModel.showCreateWishlistDialog()
+                        } else {
+                            newListName = ""
+                            viewModel.showCreateDialog()
+                        }
                     },
                     modifier = Modifier
                         .weight(1f)
@@ -135,7 +178,7 @@ fun ListsScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    items(lists, key = { it.id }) { list ->
+                    items(displayedLists, key = { it.id }) { list ->
                         ShoppingListCard(
                             list = list,
                             onClick = { onNavigateToListDetails(list.id) },
@@ -155,6 +198,77 @@ fun ListsScreen(
             // Non-intrusive Ad Banner placeholder on main screen only (Zero ads in active shopping details)
             AdBannerPlaceholder()
         }
+    }
+
+    // Create Wishlist Dialog
+    if (uiState.showCreateWishlistDialog) {
+        var wishlistName by remember { mutableStateOf("") }
+        val occasions = listOf(
+            stringResource(R.string.occasion_birthday),
+            stringResource(R.string.occasion_new_year),
+            stringResource(R.string.occasion_wedding),
+            stringResource(R.string.occasion_housewarming),
+            stringResource(R.string.occasion_other)
+        )
+        var selectedOccasion by remember { mutableStateOf(occasions.first()) }
+
+        AlertDialog(
+            onDismissRequest = { viewModel.hideCreateWishlistDialog() },
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.CardGiftcard,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.create_wishlist_title), fontWeight = FontWeight.Bold)
+                }
+            },
+            text = {
+                Column {
+                    OutlinedTextField(
+                        value = wishlistName,
+                        onValueChange = { wishlistName = it },
+                        label = { Text(stringResource(R.string.wishlist_name_hint)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(R.string.wishlist_occasion_label),
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Medium
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        items(occasions) { occasion ->
+                            FilterChip(
+                                selected = selectedOccasion == occasion,
+                                onClick = { selectedOccasion = occasion },
+                                label = { Text(occasion, style = MaterialTheme.typography.bodySmall) }
+                            )
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = { viewModel.createWishlist(wishlistName, selectedOccasion) },
+                    enabled = wishlistName.isNotBlank()
+                ) {
+                    Text(stringResource(R.string.action_add))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.hideCreateWishlistDialog() }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            }
+        )
     }
 
     // Create List Dialog
@@ -349,8 +463,13 @@ fun ListsScreen(
                         }
                         Button(
                             onClick = {
+                                val templateRes = if (sharedList.isWishlist) {
+                                    R.string.wishlist_invite_template
+                                } else {
+                                    R.string.share_invite_template
+                                }
                                 val inviteText = context.getString(
-                                    R.string.share_invite_template,
+                                    templateRes,
                                     sharedList.name,
                                     shareCode
                                 )
@@ -420,6 +539,30 @@ fun ShoppingListCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
+                        if (list.isWishlist) {
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = MaterialTheme.colorScheme.tertiaryContainer
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.CardGiftcard,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(12.dp),
+                                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = list.occasion ?: stringResource(R.string.badge_wishlist),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                                    )
+                                }
+                            }
+                        }
                         if (list.isLocked) {
                             Surface(
                                 shape = RoundedCornerShape(6.dp),
@@ -566,6 +709,7 @@ fun ShoppingListCard(
 
 @Composable
 fun EmptyListsView(
+    isWishlist: Boolean = false,
     onCreateClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -575,30 +719,30 @@ fun EmptyListsView(
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            imageVector = Icons.Default.ShoppingCart,
+            imageVector = if (isWishlist) Icons.Default.CardGiftcard else Icons.Default.ShoppingCart,
             contentDescription = null,
             modifier = Modifier.size(72.dp),
             tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = stringResource(R.string.lists_empty_title),
+            text = stringResource(if (isWishlist) R.string.wishlist_empty_title else R.string.lists_empty_title),
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = stringResource(R.string.lists_empty_desc),
+            text = stringResource(if (isWishlist) R.string.wishlist_empty_desc else R.string.lists_empty_desc),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(20.dp))
         Button(onClick = onCreateClick) {
-            Icon(Icons.Default.Add, contentDescription = null)
+            Icon(if (isWishlist) Icons.Default.CardGiftcard else Icons.Default.Add, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(R.string.lists_create_button))
+            Text(stringResource(if (isWishlist) R.string.action_create_wishlist_btn else R.string.lists_create_button))
         }
     }
 }

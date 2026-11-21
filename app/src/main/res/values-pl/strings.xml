@@ -117,6 +117,43 @@
     <string name="toast_list_unlocked">Lista odblokowana do edycji 🔓</string>
     <string name="badge_locked">Zamknięta</string>
 
+    <!-- Wishlist (Lista życzeń) -->
+    <string name="tab_shopping_lists">🛒 Zakupy</string>
+    <string name="tab_wishlists">🎁 Życzenia (Wishlist)</string>
+    <string name="create_wishlist_title">Stwórz listę życzeń</string>
+    <string name="wishlist_name_hint">Nazwa (np. Moje Urodziny)</string>
+    <string name="wishlist_occasion_label">Okazja / Wydarzenie</string>
+    <string name="occasion_birthday">🎂 Urodziny</string>
+    <string name="occasion_new_year">🎄 Nowy Rok / Święta</string>
+    <string name="occasion_wedding">💍 Ślub</string>
+    <string name="occasion_housewarming">🏠 Parapetówka</string>
+    <string name="occasion_other">🎉 Inna okazja</string>
+    <string name="badge_wishlist">Wishlist</string>
+    <string name="action_add_gift">Dodaj życzenie</string>
+    <string name="gift_item_hint">Nazwa prezentu...</string>
+    <string name="gift_url_hint">Link do sklepu (opcjonalnie)</string>
+    <string name="action_open_store">Do sklepu ↗</string>
+    <string name="action_reserve_gift">🎁 Wybierz jako prezent</string>
+    <string name="action_cancel_reservation">Anuluj rezerwację</string>
+    <string name="status_gift_reserved">Zarezerwowane: %1$s</string>
+    <string name="status_gift_available">Dostępny do wyboru</string>
+    <string name="reserve_dialog_title">Wybierz prezent</string>
+    <string name="reserve_dialog_desc">Wpisz swoje imię, aby inni goście wiedzieli, że to Twój prezent:</string>
+    <string name="reserve_name_hint">Twoje imię</string>
+    <string name="action_confirm_reservation">Zarezerwuj</string>
+    <string name="toast_gift_reserved">Prezent zarezerwowany! 🎁</string>
+    <string name="toast_reservation_cancelled">Rezerwacja anulowana</string>
+    <string name="dialog_select_list_type">Wybierz typ listy</string>
+    <string name="list_type_shopping">🛒 Lista zakupów</string>
+    <string name="list_type_wishlist">🎁 Lista życzeń (Wishlist)</string>
+    <string name="wishlist_invite_template">Dołącz do mojej listy życzeń \"%1$s\"! Wpisz kod w aplikacji, wybierz prezent i zobacz linki do sklepów: %2$s</string>
+    <string name="action_add_link">Dodaj link</string>
+    <string name="edit_url_dialog_title">Link do produktu w sklepie</string>
+    <string name="toast_invalid_url">Wprowadź prawidłowy link (http/https)</string>
+    <string name="wishlist_empty_title">Lista życzeń jest pusta</string>
+    <string name="wishlist_empty_desc">Dodaj wymarzone prezenty z linkami do sklepów i zaproś znajomych</string>
+    <string name="action_create_wishlist_btn">Stwórz listę życzeń</string>
+
     <!-- Liczba mnoga (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d pozycja</item>

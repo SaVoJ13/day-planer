@@ -126,4 +126,89 @@ class ShoppingRepositoryTest {
         )
         org.junit.Assert.assertFalse(entity.isLocked)
     }
+
+    @Test
+    fun testShoppingList_wishlistDefaults_isFalseAndNull() {
+        val list = com.savoj.shoppinglist.domain.model.ShoppingList(
+            id = 10L,
+            name = "Звичайний список",
+            createdAt = 2000L
+        )
+        org.junit.Assert.assertFalse(list.isWishlist)
+        org.junit.Assert.assertNull(list.occasion)
+    }
+
+    @Test
+    fun testShoppingList_wishlistExplicit_properties() {
+        val wishlist = com.savoj.shoppinglist.domain.model.ShoppingList(
+            id = 11L,
+            name = "Мій День народження",
+            createdAt = 2000L,
+            isWishlist = true,
+            occasion = "🎂 День народження"
+        )
+        org.junit.Assert.assertTrue(wishlist.isWishlist)
+        assertEquals("🎂 День народження", wishlist.occasion)
+    }
+
+    @Test
+    fun testShoppingItem_wishlistDefaults_isFalseAndNull() {
+        val item = com.savoj.shoppinglist.domain.model.ShoppingItem(
+            id = 100L,
+            listId = 11L,
+            name = "Навушники Sony"
+        )
+        org.junit.Assert.assertFalse(item.isReserved)
+        org.junit.Assert.assertNull(item.reservedBy)
+        org.junit.Assert.assertNull(item.url)
+    }
+
+    @Test
+    fun testShoppingItem_reservationToggle() {
+        val gift = com.savoj.shoppinglist.domain.model.ShoppingItem(
+            id = 101L,
+            listId = 11L,
+            name = "Книга про Kotlin",
+            url = "https://example.com/kotlin-book"
+        )
+        org.junit.Assert.assertFalse(gift.isReserved)
+        org.junit.Assert.assertNull(gift.reservedBy)
+        assertEquals("https://example.com/kotlin-book", gift.url)
+
+        val reservedGift = gift.copy(isReserved = true, reservedBy = "Олександр")
+        org.junit.Assert.assertTrue(reservedGift.isReserved)
+        assertEquals("Олександр", reservedGift.reservedBy)
+
+        val unreservedGift = reservedGift.copy(isReserved = false, reservedBy = null)
+        org.junit.Assert.assertFalse(unreservedGift.isReserved)
+        org.junit.Assert.assertNull(unreservedGift.reservedBy)
+    }
+
+    @Test
+    fun testShoppingListEntity_wishlistDefaults() {
+        val entity = com.savoj.shoppinglist.data.local.entity.ShoppingListEntity(
+            id = 20L,
+            name = "Подарунки на Новий Рік",
+            createdAt = 3000L,
+            isWishlist = true,
+            occasion = "🎄 Новий рік / Різдво"
+        )
+        org.junit.Assert.assertTrue(entity.isWishlist)
+        assertEquals("🎄 Новий рік / Різдво", entity.occasion)
+    }
+
+    @Test
+    fun testShoppingItemEntity_wishlistDefaults() {
+        val entity = com.savoj.shoppinglist.data.local.entity.ShoppingItemEntity(
+            id = 200L,
+            listId = 20L,
+            name = "Lego Star Wars",
+            url = "https://rozetka.com.ua/lego",
+            isReserved = true,
+            reservedBy = "Марія"
+        )
+        org.junit.Assert.assertTrue(entity.isReserved)
+        assertEquals("Марія", entity.reservedBy)
+        assertEquals("https://rozetka.com.ua/lego", entity.url)
+    }
 }

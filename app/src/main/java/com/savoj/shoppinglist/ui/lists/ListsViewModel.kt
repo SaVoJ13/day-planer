@@ -14,7 +14,9 @@ import kotlinx.coroutines.launch
 
 data class ListsUiState(
     val lists: List<ShoppingList> = emptyList(),
+    val selectedTab: Int = 0,
     val showCreateDialog: Boolean = false,
+    val showCreateWishlistDialog: Boolean = false,
     val showJoinDialog: Boolean = false,
     val isJoining: Boolean = false,
     val listToEdit: ShoppingList? = null,
@@ -35,12 +37,24 @@ class ListsViewModel(
     val lists: StateFlow<List<ShoppingList>> = repository.getAllLists()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    fun setTab(index: Int) {
+        _uiState.value = _uiState.value.copy(selectedTab = index)
+    }
+
     fun showCreateDialog() {
         _uiState.value = _uiState.value.copy(showCreateDialog = true)
     }
 
     fun hideCreateDialog() {
         _uiState.value = _uiState.value.copy(showCreateDialog = false)
+    }
+
+    fun showCreateWishlistDialog() {
+        _uiState.value = _uiState.value.copy(showCreateWishlistDialog = true)
+    }
+
+    fun hideCreateWishlistDialog() {
+        _uiState.value = _uiState.value.copy(showCreateWishlistDialog = false)
     }
 
     fun showJoinDialog() {
@@ -88,7 +102,13 @@ class ListsViewModel(
     fun createAndShareList(list: ShoppingList) {
         if (groupRepository == null) return
         viewModelScope.launch {
-            val result = groupRepository.createSharedList(list.id, list.name, emptyList())
+            val result = groupRepository.createSharedList(
+                localListId = list.id,
+                name = list.name,
+                items = emptyList(),
+                isWishlist = list.isWishlist,
+                occasion = list.occasion
+            )
             result.onSuccess { code ->
                 _uiState.value = _uiState.value.copy(
                     listToShare = list.copy(isShared = true, shareCode = code)
@@ -118,6 +138,14 @@ class ListsViewModel(
         viewModelScope.launch {
             repository.createList(name, colorHex)
             hideCreateDialog()
+        }
+    }
+
+    fun createWishlist(name: String, occasion: String?, colorHex: String = "#E91E63") {
+        if (name.isBlank()) return
+        viewModelScope.launch {
+            repository.createWishlist(name, occasion, colorHex)
+            hideCreateWishlistDialog()
         }
     }
 

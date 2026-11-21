@@ -36,4 +36,10 @@ interface ShoppingItemDao {
 
     @Query("UPDATE shopping_items SET is_completed = 0 WHERE list_id = :listId")
     suspend fun resetAllItemsAsIncomplete(listId: Long): Int
+
+    @Query("UPDATE shopping_items SET is_reserved = :isReserved, reserved_by = :reservedBy WHERE id = :itemId")
+    suspend fun updateReservationStatus(itemId: Long, isReserved: Boolean, reservedBy: String?): Int
+
+    @Query("UPDATE shopping_items SET url = :url WHERE id = :itemId")
+    suspend fun updateItemUrl(itemId: Long, url: String?): Int
 }

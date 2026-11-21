@@ -8,5 +8,8 @@ data class ShoppingItem(
     val unit: String? = null,
     val categoryId: Long? = null,
     val isCompleted: Boolean = false,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    val url: String? = null,
+    val isReserved: Boolean = false,
+    val reservedBy: String? = null
 )

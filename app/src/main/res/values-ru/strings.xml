@@ -117,6 +117,43 @@
     <string name="toast_list_unlocked">Список разблокирован для редактирования 🔓</string>
     <string name="badge_locked">Закрыт</string>
 
+    <!-- Wishlist (Списки желаний) -->
+    <string name="tab_shopping_lists">🛒 Покупки</string>
+    <string name="tab_wishlists">🎁 Желания (Wishlist)</string>
+    <string name="create_wishlist_title">Создать список желаний</string>
+    <string name="wishlist_name_hint">Название (напр. Мой День рождения)</string>
+    <string name="wishlist_occasion_label">Праздник / Событие</string>
+    <string name="occasion_birthday">🎂 День рождения</string>
+    <string name="occasion_new_year">🎄 Новый год / Рождество</string>
+    <string name="occasion_wedding">💍 Свадьба</string>
+    <string name="occasion_housewarming">🏠 Новоселье</string>
+    <string name="occasion_other">🎉 Другой праздник</string>
+    <string name="badge_wishlist">Wishlist</string>
+    <string name="action_add_gift">Добавить желание</string>
+    <string name="gift_item_hint">Название подарка...</string>
+    <string name="gift_url_hint">Ссылка на магазин (необязательно)</string>
+    <string name="action_open_store">В магазин ↗</string>
+    <string name="action_reserve_gift">🎁 Выбрать как подарок</string>
+    <string name="action_cancel_reservation">Снять бронь</string>
+    <string name="status_gift_reserved">Забронировано: %1$s</string>
+    <string name="status_gift_available">Свободен для выбора</string>
+    <string name="reserve_dialog_title">Выбрать подарок</string>
+    <string name="reserve_dialog_desc">Введите ваше имя, чтобы другие гости знали, что этот подарок дарите вы:</string>
+    <string name="reserve_name_hint">Ваше имя</string>
+    <string name="action_confirm_reservation">Забронировать</string>
+    <string name="toast_gift_reserved">Подарок успешно выбран! 🎁</string>
+    <string name="toast_reservation_cancelled">Бронь снята</string>
+    <string name="dialog_select_list_type">Выберите тип списка</string>
+    <string name="list_type_shopping">🛒 Список покупок</string>
+    <string name="list_type_wishlist">🎁 Список желаний (Wishlist)</string>
+    <string name="wishlist_invite_template">Присоединяйся к моему списку желаний «%1$s»! Введи код в приложении, выбери подарок и посмотри ссылки на магазины: %2$s</string>
+    <string name="action_add_link">Добавить ссылку</string>
+    <string name="edit_url_dialog_title">Ссылка на товар из магазина</string>
+    <string name="toast_invalid_url">Пожалуйста, введите корректную ссылку (http/https)</string>
+    <string name="wishlist_empty_title">Список желаний пуст</string>
+    <string name="wishlist_empty_desc">Добавьте желаемые подарки со ссылками на магазины и пригласите друзей</string>
+    <string name="action_create_wishlist_btn">Создать список желаний</string>
+
     <!-- Множественные формы (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d товар</item>
