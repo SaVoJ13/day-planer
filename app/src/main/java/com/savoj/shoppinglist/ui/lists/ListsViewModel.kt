@@ -141,4 +141,10 @@ class ListsViewModel(
             repository.resetAllItemsAsIncomplete(listId)
         }
     }
+
+    fun toggleListLocked(list: ShoppingList) {
+        viewModelScope.launch {
+            repository.setListLocked(list.id, !list.isLocked)
+        }
+    }
 }

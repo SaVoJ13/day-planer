@@ -126,7 +126,19 @@ class ListDetailsViewModel(
         }
     }
 
+    fun toggleListLocked() {
+        val list = _uiState.value.currentList ?: return
+        val newLockedState = !list.isLocked
+        viewModelScope.launch {
+            repository.setListLocked(listId, newLockedState)
+            _uiState.value = _uiState.value.copy(
+                currentList = list.copy(isLocked = newLockedState)
+            )
+        }
+    }
+
     fun addItem(name: String, quantity: Double? = null, unit: String? = null, categoryId: Long? = null) {
+        if (_uiState.value.currentList?.isLocked == true) return
         val cleanName = ShoppingRepositoryImpl.cleanItemName(name)
         if (cleanName.isBlank()) return
         viewModelScope.launch {
@@ -145,6 +157,7 @@ class ListDetailsViewModel(
     }
 
     fun addSmartItems(rawText: String) {
+        if (_uiState.value.currentList?.isLocked == true) return
         val parsed = ShoppingRepositoryImpl.parseMultiLineText(rawText)
         if (parsed.isEmpty()) return
 
@@ -170,6 +183,7 @@ class ListDetailsViewModel(
     }
 
     fun onVoiceInput(spokenText: String) {
+        if (_uiState.value.currentList?.isLocked == true) return
         val cleanSpeech = spokenText
             .replace(Regex("(?i)^(купити|купи|додати|додай|купить|добав|добавить|buy|add|kup)\\s+"), "")
             .trim()
@@ -185,6 +199,7 @@ class ListDetailsViewModel(
     }
 
     fun toggleItemCompleted(item: ShoppingItem) {
+        if (_uiState.value.currentList?.isLocked == true) return
         viewModelScope.launch {
             val updated = item.copy(isCompleted = !item.isCompleted)
             repository.updateItem(updated)
@@ -196,6 +211,7 @@ class ListDetailsViewModel(
     }
 
     fun deleteItem(item: ShoppingItem) {
+        if (_uiState.value.currentList?.isLocked == true) return
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(lastDeletedItem = item)
             repository.deleteItem(item.id)
@@ -221,18 +237,21 @@ class ListDetailsViewModel(
     }
 
     fun deleteCompletedItems() {
+        if (_uiState.value.currentList?.isLocked == true) return
         viewModelScope.launch {
             repository.deleteCompletedItems(listId)
         }
     }
 
     fun resetAllItems() {
+        if (_uiState.value.currentList?.isLocked == true) return
         viewModelScope.launch {
             repository.resetAllItemsAsIncomplete(listId)
         }
     }
 
     fun onClipboardPasted(text: String) {
+        if (_uiState.value.currentList?.isLocked == true) return
         val parsed = ShoppingRepositoryImpl.parseMultiLineText(text)
         if (parsed.size > 1) {
             _uiState.value = _uiState.value.copy(

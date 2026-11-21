@@ -12,6 +12,7 @@ interface ShoppingRepository {
     suspend fun createList(name: String, colorHex: String = "#4CAF50"): Long
     suspend fun updateList(list: ShoppingList)
     suspend fun deleteList(listId: Long)
+    suspend fun setListLocked(listId: Long, isLocked: Boolean)
 
     fun getItemsForList(listId: Long): Flow<List<ShoppingItem>>
     suspend fun addItem(listId: Long, name: String, quantity: Double? = null, unit: String? = null, categoryId: Long? = null): Long
