@@ -94,4 +94,36 @@ class ShoppingRepositoryTest {
         val result = ShoppingRepositoryImpl.parseMultiLineText(raw)
         assertTrue(result.isEmpty())
     }
+
+    @Test
+    fun testShoppingList_defaultIsLocked_isFalse() {
+        val list = com.savoj.shoppinglist.domain.model.ShoppingList(
+            id = 1L,
+            name = "Продукти",
+            createdAt = 1000L
+        )
+        org.junit.Assert.assertFalse(list.isLocked)
+    }
+
+    @Test
+    fun testShoppingList_isLocked_toggle() {
+        val list = com.savoj.shoppinglist.domain.model.ShoppingList(
+            id = 1L,
+            name = "Продукти",
+            createdAt = 1000L,
+            isLocked = false
+        )
+        val lockedList = list.copy(isLocked = true)
+        org.junit.Assert.assertTrue(lockedList.isLocked)
+    }
+
+    @Test
+    fun testShoppingListEntity_defaultIsLocked_isFalse() {
+        val entity = com.savoj.shoppinglist.data.local.entity.ShoppingListEntity(
+            id = 1L,
+            name = "Продукти",
+            createdAt = 1000L
+        )
+        org.junit.Assert.assertFalse(entity.isLocked)
+    }
 }

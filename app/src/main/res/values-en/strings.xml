@@ -106,6 +106,17 @@
     <string name="smart_added_toast">Added %1$d items</string>
     <string name="quick_suggestions_title">Quick suggestions</string>
 
+    <!-- Close and lock list -->
+    <string name="all_items_completed_title">All items bought! 🎉</string>
+    <string name="all_items_completed_desc">You can now close and lock the list from edits</string>
+    <string name="action_close_list">Close list</string>
+    <string name="action_unlock_list">Unlock list</string>
+    <string name="list_locked_title">List is locked</string>
+    <string name="list_locked_desc">List is locked against accidental changes</string>
+    <string name="toast_list_locked">List closed and locked 🔒</string>
+    <string name="toast_list_unlocked">List unlocked for editing 🔓</string>
+    <string name="badge_locked">Locked</string>
+
     <!-- Plurals -->
     <plurals name="plural_items">
         <item quantity="one">%d item</item>

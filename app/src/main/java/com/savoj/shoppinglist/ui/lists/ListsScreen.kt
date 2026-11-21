@@ -24,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material.icons.filled.GroupAdd
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
@@ -143,7 +145,8 @@ fun ListsScreen(
                             },
                             onDeleteClick = { viewModel.showDeleteDialog(list) },
                             onResetClick = { viewModel.resetAllItems(list.id) },
-                            onShareClick = { viewModel.showShareDialog(list) }
+                            onShareClick = { viewModel.showShareDialog(list) },
+                            onToggleLockClick = { viewModel.toggleListLocked(list) }
                         )
                     }
                 }
@@ -381,7 +384,8 @@ fun ShoppingListCard(
     onEditClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onResetClick: () -> Unit,
-    onShareClick: () -> Unit
+    onShareClick: () -> Unit,
+    onToggleLockClick: () -> Unit
 ) {
     var menuExpanded by remember { mutableStateOf(false) }
     val progress = if (list.totalItems > 0) list.completedItems.toFloat() / list.totalItems else 0f
@@ -411,29 +415,58 @@ fun ShoppingListCard(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    if (list.isShared && list.shareCode != null) {
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            modifier = Modifier.clickable { onShareClick() }
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                    Row(
+                        modifier = Modifier.padding(top = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        if (list.isLocked) {
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = MaterialTheme.colorScheme.primaryContainer
                             ) {
-                                Icon(
-                                    Icons.Default.Group,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(12.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "${stringResource(R.string.badge_shared)}: ${list.shareCode}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                                )
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.Lock,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(12.dp),
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = stringResource(R.string.badge_locked),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                                    )
+                                }
+                            }
+                        }
+                        if (list.isShared && list.shareCode != null) {
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                modifier = Modifier.clickable { onShareClick() }
+                            ) {
+                                Row(
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        Icons.Default.Group,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(12.dp),
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text(
+                                        text = "${stringResource(R.string.badge_shared)}: ${list.shareCode}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                }
                             }
                         }
                     }
@@ -456,6 +489,25 @@ fun ShoppingListCard(
                             expanded = menuExpanded,
                             onDismissRequest = { menuExpanded = false }
                         ) {
+                            if (list.isLocked) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.action_unlock_list)) },
+                                    leadingIcon = { Icon(Icons.Default.LockOpen, contentDescription = null) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        onToggleLockClick()
+                                    }
+                                )
+                            } else if (list.totalItems > 0 && list.completedItems == list.totalItems) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.action_close_list)) },
+                                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        onToggleLockClick()
+                                    }
+                                )
+                            }
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.menu_share_list)) },
                                 leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
@@ -471,24 +523,24 @@ fun ShoppingListCard(
                                     onResetClick()
                                 }
                             )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.action_edit)) },
-                            onClick = {
-                                menuExpanded = false
-                                onEditClick()
-                            }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.action_delete)) },
-                            onClick = {
-                                menuExpanded = false
-                                onDeleteClick()
-                            }
-                        )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.action_edit)) },
+                                onClick = {
+                                    menuExpanded = false
+                                    onEditClick()
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.action_delete)) },
+                                onClick = {
+                                    menuExpanded = false
+                                    onDeleteClick()
+                                }
+                            )
+                        }
                     }
                 }
             }
-        }
 
         Spacer(modifier = Modifier.height(8.dp))
 

@@ -33,7 +33,8 @@ class ShoppingRepositoryImpl(
                     completedItems = stat.completedItems,
                     isArchived = stat.list.isArchived,
                     isShared = stat.list.isShared,
-                    shareCode = stat.list.shareCode
+                    shareCode = stat.list.shareCode,
+                    isLocked = stat.list.isLocked
                 )
             }
         }
@@ -49,7 +50,8 @@ class ShoppingRepositoryImpl(
                     createdAt = it.createdAt,
                     isArchived = it.isArchived,
                     isShared = it.isShared,
-                    shareCode = it.shareCode
+                    shareCode = it.shareCode,
+                    isLocked = it.isLocked
                 )
             }
         }
@@ -71,13 +73,20 @@ class ShoppingRepositoryImpl(
                 name = list.name.trim(),
                 colorHex = list.colorHex,
                 createdAt = list.createdAt,
-                isArchived = list.isArchived
+                isArchived = list.isArchived,
+                isShared = list.isShared,
+                shareCode = list.shareCode,
+                isLocked = list.isLocked
             )
         )
     }
 
     override suspend fun deleteList(listId: Long) {
         listDao.deleteListById(listId)
+    }
+
+    override suspend fun setListLocked(listId: Long, isLocked: Boolean) {
+        listDao.updateLockedStatus(listId, isLocked)
     }
 
     override fun getItemsForList(listId: Long): Flow<List<ShoppingItem>> {

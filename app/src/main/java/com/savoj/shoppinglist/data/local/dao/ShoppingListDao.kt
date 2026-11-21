@@ -34,6 +34,9 @@ interface ShoppingListDao {
     @Query("UPDATE shopping_lists SET is_shared = :isShared, share_code = :shareCode WHERE id = :listId")
     suspend fun updateSharingStatus(listId: Long, isShared: Boolean, shareCode: String?): Int
 
+    @Query("UPDATE shopping_lists SET is_locked = :isLocked WHERE id = :listId")
+    suspend fun updateLockedStatus(listId: Long, isLocked: Boolean): Int
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertList(list: ShoppingListEntity): Long
 

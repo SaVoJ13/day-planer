@@ -9,5 +9,6 @@ data class ShoppingList(
     val completedItems: Int = 0,
     val isArchived: Boolean = false,
     val isShared: Boolean = false,
-    val shareCode: String? = null
+    val shareCode: String? = null,
+    val isLocked: Boolean = false
 )

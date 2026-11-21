@@ -39,12 +39,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.GroupAdd
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -114,6 +117,8 @@ fun ListDetailsScreen(
 
     val activeItems = uiState.items.filter { !it.isCompleted }
     val completedItems = uiState.items.filter { it.isCompleted }
+    val isLocked = uiState.currentList?.isLocked == true
+    val isFullyCompleted = uiState.items.isNotEmpty() && activeItems.isEmpty()
 
     val undoLabel = stringResource(R.string.btn_undo)
     val itemDeletedMessage = stringResource(R.string.toast_item_deleted)
@@ -169,13 +174,24 @@ fun ListDetailsScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text(
-                            text = uiState.currentList?.name ?: "",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = uiState.currentList?.name ?: "",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            if (isLocked) {
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = stringResource(R.string.badge_locked),
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
                         Text(
                             text = stringResource(R.string.progress_format, completedItems.size, uiState.items.size),
                             style = MaterialTheme.typography.bodySmall,
@@ -189,6 +205,29 @@ fun ListDetailsScreen(
                     }
                 },
                 actions = {
+                    if (isLocked) {
+                        IconButton(onClick = {
+                            viewModel.toggleListLocked()
+                            Toast.makeText(context, context.getString(R.string.toast_list_unlocked), Toast.LENGTH_SHORT).show()
+                        }) {
+                            Icon(
+                                Icons.Default.LockOpen,
+                                contentDescription = stringResource(R.string.action_unlock_list),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    } else if (isFullyCompleted) {
+                        IconButton(onClick = {
+                            viewModel.toggleListLocked()
+                            Toast.makeText(context, context.getString(R.string.toast_list_locked), Toast.LENGTH_SHORT).show()
+                        }) {
+                            Icon(
+                                Icons.Default.Lock,
+                                contentDescription = stringResource(R.string.action_close_list),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
                     IconButton(onClick = { viewModel.showShareDialog() }) {
                         Icon(
                             Icons.Default.GroupAdd,
@@ -219,6 +258,27 @@ fun ListDetailsScreen(
                             expanded = menuExpanded,
                             onDismissRequest = { menuExpanded = false }
                         ) {
+                            if (isLocked) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.action_unlock_list)) },
+                                    leadingIcon = { Icon(Icons.Default.LockOpen, contentDescription = null) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        viewModel.toggleListLocked()
+                                        Toast.makeText(context, context.getString(R.string.toast_list_unlocked), Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                            } else if (isFullyCompleted) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.action_close_list)) },
+                                    leadingIcon = { Icon(Icons.Default.Lock, contentDescription = null) },
+                                    onClick = {
+                                        menuExpanded = false
+                                        viewModel.toggleListLocked()
+                                        Toast.makeText(context, context.getString(R.string.toast_list_locked), Toast.LENGTH_SHORT).show()
+                                    }
+                                )
+                            }
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.menu_reset_all_items)) },
                                 onClick = {
@@ -242,78 +302,156 @@ fun ListDetailsScreen(
             )
         },
         bottomBar = {
-            Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .imePadding(),
-                tonalElevation = 3.dp,
-                shadowElevation = 8.dp
-            ) {
-                Column(
+            if (isLocked) {
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .navigationBarsPadding()
+                        .imePadding(),
+                    tonalElevation = 3.dp,
+                    shadowElevation = 8.dp
                 ) {
-                    // Quick Suggestion Chips Row
-                    if (suggestions.isNotEmpty()) {
-                        LazyRow(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            items(suggestions, key = { it }) { suggestion ->
-                                SuggestionChip(
-                                    onClick = { viewModel.addItem(suggestion) },
-                                    label = { Text("+ $suggestion", style = MaterialTheme.typography.labelMedium) },
-                                    colors = SuggestionChipDefaults.suggestionChipColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                                        labelColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                    ),
-                                    border = null
-                                )
-                            }
-                        }
-                    }
-
-                    // Input Row
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                            .navigationBarsPadding()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        IconButton(
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(
+                                Icons.Default.Lock,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(R.string.list_locked_desc),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Button(
                             onClick = {
-                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clipText = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
-                                if (clipText.isNotBlank()) {
-                                    viewModel.onClipboardPasted(clipText)
-                                }
+                                viewModel.toggleListLocked()
+                                Toast.makeText(context, context.getString(R.string.toast_list_unlocked), Toast.LENGTH_SHORT).show()
                             }
                         ) {
-                            Icon(Icons.Default.ContentPaste, contentDescription = stringResource(R.string.paste_action_tooltip))
+                            Icon(
+                                Icons.Default.LockOpen,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp)
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = stringResource(R.string.action_unlock_list))
+                        }
+                    }
+                }
+            } else {
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .imePadding(),
+                    tonalElevation = 3.dp,
+                    shadowElevation = 8.dp
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .navigationBarsPadding()
+                    ) {
+                        // Quick Suggestion Chips Row
+                        if (suggestions.isNotEmpty()) {
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                items(suggestions, key = { it }) { suggestion ->
+                                    SuggestionChip(
+                                        onClick = { viewModel.addItem(suggestion) },
+                                        label = { Text("+ $suggestion", style = MaterialTheme.typography.labelMedium) },
+                                        colors = SuggestionChipDefaults.suggestionChipColors(
+                                            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                                            labelColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                        ),
+                                        border = null
+                                    )
+                                }
+                            }
                         }
 
-                        IconButton(
-                            onClick = { viewModel.setRecentSheetVisible(true) }
+                        // Input Row
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(Icons.Default.Star, contentDescription = stringResource(R.string.recent_sheet_title))
-                        }
+                            IconButton(
+                                onClick = {
+                                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                    val clipText = clipboard.primaryClip?.getItemAt(0)?.text?.toString() ?: ""
+                                    if (clipText.isNotBlank()) {
+                                        viewModel.onClipboardPasted(clipText)
+                                    }
+                                }
+                            ) {
+                                Icon(Icons.Default.ContentPaste, contentDescription = stringResource(R.string.paste_action_tooltip))
+                            }
 
-                        OutlinedTextField(
-                            value = inputItemName,
-                            onValueChange = { inputItemName = it },
-                            placeholder = { Text(stringResource(R.string.item_quick_add_hint)) },
-                            singleLine = true,
-                            keyboardOptions = KeyboardOptions(
-                                imeAction = ImeAction.Done,
-                                capitalization = KeyboardCapitalization.Sentences
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
+                            IconButton(
+                                onClick = { viewModel.setRecentSheetVisible(true) }
+                            ) {
+                                Icon(Icons.Default.Star, contentDescription = stringResource(R.string.recent_sheet_title))
+                            }
+
+                            OutlinedTextField(
+                                value = inputItemName,
+                                onValueChange = { inputItemName = it },
+                                placeholder = { Text(stringResource(R.string.item_quick_add_hint)) },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(
+                                    imeAction = ImeAction.Done,
+                                    capitalization = KeyboardCapitalization.Sentences
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        if (inputItemName.isNotBlank()) {
+                                            val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
+                                            viewModel.addSmartItems(inputItemName)
+                                            inputItemName = ""
+                                            if (count > 1) {
+                                                Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    }
+                                ),
+                                trailingIcon = {
                                     if (inputItemName.isNotBlank()) {
+                                        IconButton(onClick = { inputItemName = "" }) {
+                                            Icon(
+                                                Icons.Default.Close,
+                                                contentDescription = stringResource(R.string.action_cancel),
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
+                                    }
+                                },
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = 4.dp)
+                            )
+
+                            if (inputItemName.isNotBlank()) {
+                                IconButton(
+                                    onClick = {
                                         val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
                                         viewModel.addSmartItems(inputItemName)
                                         inputItemName = ""
@@ -321,50 +459,23 @@ fun ListDetailsScreen(
                                             Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
                                         }
                                     }
+                                ) {
+                                    Icon(
+                                        Icons.Default.Add,
+                                        contentDescription = stringResource(R.string.action_add),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
-                            ),
-                            trailingIcon = {
-                                if (inputItemName.isNotBlank()) {
-                                    IconButton(onClick = { inputItemName = "" }) {
-                                        Icon(
-                                            Icons.Default.Close,
-                                            contentDescription = stringResource(R.string.action_cancel),
-                                            modifier = Modifier.size(18.dp)
-                                        )
-                                    }
+                            } else {
+                                IconButton(
+                                    onClick = { launchVoiceInput() }
+                                ) {
+                                    Icon(
+                                        Icons.Default.Mic,
+                                        contentDescription = stringResource(R.string.voice_input_tooltip),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
-                            },
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = 4.dp)
-                        )
-
-                        if (inputItemName.isNotBlank()) {
-                            IconButton(
-                                onClick = {
-                                    val count = ShoppingRepositoryImpl.parseMultiLineText(inputItemName).size
-                                    viewModel.addSmartItems(inputItemName)
-                                    inputItemName = ""
-                                    if (count > 1) {
-                                        Toast.makeText(context, context.getString(R.string.smart_added_toast, count), Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            ) {
-                                Icon(
-                                    Icons.Default.Add,
-                                    contentDescription = stringResource(R.string.action_add),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
-                            }
-                        } else {
-                            IconButton(
-                                onClick = { launchVoiceInput() }
-                            ) {
-                                Icon(
-                                    Icons.Default.Mic,
-                                    contentDescription = stringResource(R.string.voice_input_tooltip),
-                                    tint = MaterialTheme.colorScheme.primary
-                                )
                             }
                         }
                     }
@@ -379,6 +490,118 @@ fun ListDetailsScreen(
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
+            // Locked banner
+            if (isLocked) {
+                item(key = "locked_banner") {
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Icon(
+                                    Icons.Default.Lock,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Column {
+                                    Text(
+                                        text = stringResource(R.string.list_locked_title),
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.list_locked_desc),
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(8.dp))
+                            OutlinedButton(
+                                onClick = {
+                                    viewModel.toggleListLocked()
+                                    Toast.makeText(context, context.getString(R.string.toast_list_unlocked), Toast.LENGTH_SHORT).show()
+                                }
+                            ) {
+                                Icon(
+                                    Icons.Default.LockOpen,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(text = stringResource(R.string.action_unlock_list))
+                            }
+                        }
+                    }
+                }
+            } else if (isFullyCompleted) {
+                // Celebration & Close List Banner
+                item(key = "celebration_close_banner") {
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = stringResource(R.string.all_items_completed_title),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = stringResource(R.string.all_items_completed_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = {
+                                    viewModel.toggleListLocked()
+                                    Toast.makeText(context, context.getString(R.string.toast_list_locked), Toast.LENGTH_SHORT).show()
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(text = stringResource(R.string.action_close_list))
+                            }
+                        }
+                    }
+                }
+            }
+
             if (uiState.items.isEmpty()) {
                 item {
                     Column(
@@ -406,6 +629,7 @@ fun ListDetailsScreen(
                 items(activeItems, key = { it.id }) { item ->
                     ShoppingItemRow(
                         item = item,
+                        isLocked = isLocked,
                         onToggle = { viewModel.toggleItemCompleted(item) },
                         onDelete = {
                             viewModel.deleteItem(item)
@@ -419,6 +643,9 @@ fun ListDetailsScreen(
                                     viewModel.undoDelete()
                                 }
                             }
+                        },
+                        onLockedAttempt = {
+                            Toast.makeText(context, context.getString(R.string.toast_list_locked), Toast.LENGTH_SHORT).show()
                         }
                     )
                 }
@@ -452,8 +679,12 @@ fun ListDetailsScreen(
                         items(completedItems, key = { it.id }) { item ->
                             ShoppingItemRow(
                                 item = item,
+                                isLocked = isLocked,
                                 onToggle = { viewModel.toggleItemCompleted(item) },
-                                onDelete = { viewModel.deleteItem(item) }
+                                onDelete = { viewModel.deleteItem(item) },
+                                onLockedAttempt = {
+                                    Toast.makeText(context, context.getString(R.string.toast_list_locked), Toast.LENGTH_SHORT).show()
+                                }
                             )
                         }
                     }
@@ -665,13 +896,17 @@ fun ListDetailsScreen(
 @Composable
 fun ShoppingItemRow(
     item: ShoppingItem,
+    isLocked: Boolean = false,
     onToggle: () -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onLockedAttempt: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onToggle),
+            .clickable(onClick = {
+                if (isLocked) onLockedAttempt() else onToggle()
+            }),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (item.isCompleted) {
@@ -689,7 +924,10 @@ fun ShoppingItemRow(
         ) {
             Checkbox(
                 checked = item.isCompleted,
-                onCheckedChange = { onToggle() },
+                enabled = !isLocked,
+                onCheckedChange = {
+                    if (isLocked) onLockedAttempt() else onToggle()
+                },
                 modifier = Modifier.size(48.dp) // Accessibility: 48dp touch target
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -704,16 +942,18 @@ fun ShoppingItemRow(
                 },
                 modifier = Modifier.weight(1f)
             )
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.size(48.dp)
-            ) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = stringResource(R.string.action_delete),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                    modifier = Modifier.size(20.dp)
-                )
+            if (!isLocked) {
+                IconButton(
+                    onClick = onDelete,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = stringResource(R.string.action_delete),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }

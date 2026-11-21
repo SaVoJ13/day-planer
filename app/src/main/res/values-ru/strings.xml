@@ -106,6 +106,17 @@
     <string name="smart_added_toast">Добавлено %1$d товаров</string>
     <string name="quick_suggestions_title">Быстрые подсказки</string>
 
+    <!-- Закрытие и блокировка списка -->
+    <string name="all_items_completed_title">Все покупки сделаны! 🎉</string>
+    <string name="all_items_completed_desc">Список можно закрыть и заблокировать от изменений</string>
+    <string name="action_close_list">Закрыть список</string>
+    <string name="action_unlock_list">Разблокировать список</string>
+    <string name="list_locked_title">Список закрыт</string>
+    <string name="list_locked_desc">Список заблокирован от случайных изменений</string>
+    <string name="toast_list_locked">Список закрыт и заблокирован 🔒</string>
+    <string name="toast_list_unlocked">Список разблокирован для редактирования 🔓</string>
+    <string name="badge_locked">Закрыт</string>
+
     <!-- Множественные формы (Plurals) -->
     <plurals name="plural_items">
         <item quantity="one">%d товар</item>

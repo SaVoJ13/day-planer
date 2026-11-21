@@ -20,5 +20,7 @@ data class ShoppingListEntity(
     @ColumnInfo(name = "is_shared")
     val isShared: Boolean = false,
     @ColumnInfo(name = "share_code")
-    val shareCode: String? = null
+    val shareCode: String? = null,
+    @ColumnInfo(name = "is_locked")
+    val isLocked: Boolean = false
 )
