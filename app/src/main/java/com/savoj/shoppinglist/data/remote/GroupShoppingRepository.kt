@@ -34,7 +34,9 @@ class GroupShoppingRepository(
     suspend fun createSharedList(
         localListId: Long,
         name: String,
-        items: List<ShoppingItemEntity>
+        items: List<ShoppingItemEntity>,
+        isWishlist: Boolean = false,
+        occasion: String? = null
     ): Result<String> {
         val shareCode = ShareCodeGenerator.generateCode()
 
@@ -47,6 +49,8 @@ class GroupShoppingRepository(
             val listData = hashMapOf(
                 "name" to name,
                 "creatorId" to uid,
+                "isWishlist" to isWishlist,
+                "occasion" to (occasion ?: ""),
                 "createdAt" to FieldValue.serverTimestamp(),
                 "updatedAt" to FieldValue.serverTimestamp()
             )
@@ -66,6 +70,9 @@ class GroupShoppingRepository(
                         "unit" to (item.unit ?: ""),
                         "categoryName" to "",
                         "isBought" to item.isCompleted,
+                        "url" to (item.url ?: ""),
+                        "isReserved" to item.isReserved,
+                        "reservedBy" to (item.reservedBy ?: ""),
                         "addedBy" to uid,
                         "updatedAt" to FieldValue.serverTimestamp()
                     )
@@ -91,6 +98,8 @@ class GroupShoppingRepository(
         }
 
         val remoteName = docSnapshot.getString("name") ?: "Shared List"
+        val remoteIsWishlist = docSnapshot.getBoolean("isWishlist") ?: false
+        val remoteOccasion = docSnapshot.getString("occasion")
         val existingLocal = listDao.getListByShareCode(code)
         val localListId: Long = if (existingLocal != null) {
             existingLocal.id
@@ -98,7 +107,9 @@ class GroupShoppingRepository(
             val newList = ShoppingListEntity(
                 name = remoteName,
                 isShared = true,
-                shareCode = code
+                shareCode = code,
+                isWishlist = remoteIsWishlist,
+                occasion = remoteOccasion
             )
             listDao.insertList(newList)
         }
@@ -113,6 +124,9 @@ class GroupShoppingRepository(
             val itemUnit = doc.getString("unit") ?: ""
             val itemCategory = doc.getString("categoryName")
             val isBought = doc.getBoolean("isBought") ?: false
+            val itemUrl = doc.getString("url")
+            val isReserved = doc.getBoolean("isReserved") ?: false
+            val reservedBy = doc.getString("reservedBy")
 
             val localItem = ShoppingItemEntity(
                 listId = localListId,
@@ -120,7 +134,10 @@ class GroupShoppingRepository(
                 quantity = itemQuantity.toDoubleOrNull(),
                 unit = itemUnit.ifBlank { null },
                 categoryId = null,
-                isCompleted = isBought
+                isCompleted = isBought,
+                url = itemUrl,
+                isReserved = isReserved,
+                reservedBy = reservedBy
             )
             itemDao.insertItem(localItem)
         }
@@ -148,6 +165,9 @@ class GroupShoppingRepository(
                             unit = doc.getString("unit") ?: "",
                             categoryName = doc.getString("categoryName") ?: "",
                             isBought = doc.getBoolean("isBought") ?: false,
+                            url = doc.getString("url") ?: "",
+                            isReserved = doc.getBoolean("isReserved") ?: false,
+                            reservedBy = doc.getString("reservedBy") ?: "",
                             addedBy = doc.getString("addedBy") ?: "",
                             updatedAt = doc.getTimestamp("updatedAt")
                         )
@@ -166,7 +186,8 @@ class GroupShoppingRepository(
         name: String,
         quantity: String,
         unit: String,
-        categoryName: String
+        categoryName: String,
+        url: String = ""
     ): Result<String> = runCatching {
         val uid = ensureAuthenticated()
         val code = ShareCodeGenerator.normalizeCode(shareCode)
@@ -180,6 +201,9 @@ class GroupShoppingRepository(
             "unit" to unit.trim(),
             "categoryName" to categoryName.trim(),
             "isBought" to false,
+            "url" to url.trim(),
+            "isReserved" to false,
+            "reservedBy" to "",
             "addedBy" to uid,
             "updatedAt" to FieldValue.serverTimestamp()
         )
@@ -189,6 +213,24 @@ class GroupShoppingRepository(
             .update("updatedAt", FieldValue.serverTimestamp())
 
         itemDoc.id
+    }
+
+    suspend fun updateSharedItemReservation(
+        shareCode: String,
+        itemId: String,
+        isReserved: Boolean,
+        reservedBy: String?
+    ): Result<Unit> = runCatching {
+        val code = ShareCodeGenerator.normalizeCode(shareCode)
+        firestore.collection("shared_lists").document(code)
+            .collection("items").document(itemId)
+            .update(
+                mapOf(
+                    "isReserved" to isReserved,
+                    "reservedBy" to (reservedBy ?: ""),
+                    "updatedAt" to FieldValue.serverTimestamp()
+                )
+            ).await()
     }
 
     suspend fun toggleSharedItem(

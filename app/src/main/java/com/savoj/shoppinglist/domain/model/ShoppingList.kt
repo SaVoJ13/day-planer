@@ -10,5 +10,7 @@ data class ShoppingList(
     val isArchived: Boolean = false,
     val isShared: Boolean = false,
     val shareCode: String? = null,
-    val isLocked: Boolean = false
+    val isLocked: Boolean = false,
+    val isWishlist: Boolean = false,
+    val occasion: String? = null
 )
